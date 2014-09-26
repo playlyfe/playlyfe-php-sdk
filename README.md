@@ -1,9 +1,9 @@
 Playlyfe PHP SDK
 ================
 
-This is a basic OAuth 2.0 PHP client SDK for the Playlyfe API. It currently only support the `client_credentials` flow.
+This is a basic OAuth 2.0 PHP client SDK for the Playlyfe API. It currently only supports the `client_credentials` flow.
 
-Given below is a simple example of using this client to check if a player exists and if not create it.
+Given below is a simple example of using this client to check if a player exists and create it if it doesn't.
 
 For more documentation on the Playlyfe API visit [https://dev.playlyfe.com](https://dev.playlyfe.com)
 
