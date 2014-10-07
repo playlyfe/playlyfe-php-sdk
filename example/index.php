@@ -4,7 +4,7 @@
 
   ini_set('display_errors', 'on');
 
-  require_once("pl_client.php");
+  require_once("../src/pl_client.php");
 
   const CLIENT_ID     = 'YjQ4NmJlNGMtMDFlMS00ZDQ0LThhNjUtYjZlNjA4MmRiYTlj';
   const CLIENT_SECRET = 'YjI1ZDNjNGItOTM1Mi00ZWVmLWFhMGUtNDM4MGQ2ZmZmODUzNzE0ZjUzZDAtNDU3Mi0xMWU0LTg3MWQtYTk4YjE3YjJiYzk1';

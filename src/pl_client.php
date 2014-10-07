@@ -22,7 +22,7 @@
 
         public function getAccessToken() {
             $response = $this->client->getAccessToken(self::AUTHORIZATION_ENDPOINT, 'client_credentials', array());
-            $token = $response['result']['access_token'];
+            $token = $response['result']->access_token;
             return $token;
         }
 
