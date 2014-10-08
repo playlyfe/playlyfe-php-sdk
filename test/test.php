@@ -147,4 +147,10 @@
     )
   );
   assert(Playlyfe::get_login_url() == "https://playlyfe.com/auth?redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fwelcome%2Fhome&response_type=code&client_id=Zjc0MWU0N2MtODkzNS00ZWNmLWEwNmYtY2M1MGMxNGQ1YmQ4");
+  try {
+    Playlyfe::exchange_code(null);
+  }
+  catch (PlaylyfeException $e) {
+    assert($e->name == 'init_failed');
+  }
 ?>

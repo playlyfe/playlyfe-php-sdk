@@ -1,11 +1,12 @@
 Playlyfe PHP SDK
 ================
-This is a basic OAuth 2.0 PHP client SDK for the Playlyfe API. It currently only supports the `client_credentials` flow and `authorization code` flow.  
-To understand how the complete api works checkout [The Playlyfe Api](http://dev.playlyfe.com/docs/api) for more information.
+This is the official OAuth 2.0 PHP client SDK for the Playlyfe API.  
+It supports the `client_credentials` and `authorization code` OAuth 2.0 flows.    
+For a complete API Reference checkout [Playlyfe Developers](https://dev.playlyfe.com/docs/api) for more information.
 
 Requires
 --------
-Php >= 5.5.9
+PHP >= 5.5.9  
 libcurl3
 
 Install
@@ -17,8 +18,90 @@ require_once("lib/playlyfe.php");
 ?>
 ```
 
-Documentation
--------------------------------
+Using
+-----
+### Create a client 
+  If you haven't created a client for your game yet just head over to [Playlyfe](http://playlyfe.com) and login into your account, and go to the game settings and click on client  
+  **1.Client Credentials Flow**  
+    In the client page click on whitelabel client  
+    ![alt text](https://github.com/pyros2097/playlyfe-ruby-sdk/raw/master/images/client.png "")
+
+  **2.Authorization Code Flow**  
+    In the client page click on backend client and specify the redirect uri this will be the url where you will be redirected to get the token
+    ![alt text](https://github.com/pyros2097/playlyfe-ruby-sdk/raw/master/images/auth.png "")
+
+> Note: If you want to test the sdk in staging you can click the Test Client button. You need to pass the player_id in the query in every request also.
+
+  And then note down the client id and client secret you will need it later for using it in the sdk
+
+The Playlyfe class allows you to make rest api calls like GET, POST, .. etc
+Example: GET
+```ruby
+# To get infomation of the player johny
+player = Playlyfe.get(
+  route: '/player',
+  query: { player_id: 'johny' }
+)
+puts player['id']
+puts player['scores']
+
+# To get all available processes with query
+processes = Playlyfe.get(
+  route: '/processes',
+  query: { player_id: 'johny' }
+)
+puts processes
+```
+
+Example: POST
+```ruby
+# To start a process
+process =  Playlyfe.post(
+  route: "/definitions/processes/collect",
+  query: { player_id: 'johny' },
+  body: { name: "My First Process" }
+)
+
+#To play a process
+Playlyfe.post(
+  route: "/processes/#{@process_id}/play",
+  query: { player_id: 'johny' },
+  body: { trigger: "#{@trigger}" }
+)
+```
+
+# Examples
+## 1. Client Credentials Flow
+```php
+<?php
+  session_start();
+  ini_set('display_errors', 'on');
+  require_once("pl_client.php");
+
+  Playlyfe::init(
+    array(
+      'client_id' => "Zjc0MWU0N2MtODkzNS00ZWNmLWEwNmYtY2M1MGMxNGQ1YmQ4",
+      'client_secret' => "YzllYTE5NDQtNDMwMC00YTdkLWFiM2MtNTg0Y2ZkOThjYTZkMGIyNWVlNDAtNGJiMC0xMWU0LWI2NGEtYjlmMmFkYTdjOTI3",
+      'type' => 'client'
+    )
+  );
+
+  $players = Playlyfe::get('/players', array('player_id' => 'student1'));
+
+?>
+```
+
+## 2. Authorization Code Flow
+```php
+<?php
+  session_start();
+  ini_set('display_errors', 'on');
+  require_once("pl_client.php");
+
+?>
+```
+
+# Documentation
 ## Init
 You can initiate a client by giving the client_id and client_secret params
 ```php
@@ -29,8 +112,8 @@ Playlyfe.init(
         "client_secret" => "",
         "type" => "client" or "code",
         "redirect_uri" => "The url to redirect to", #only for auth code flow
-        "store" => function($access_token) {}; # The closure which will persist the access token to a database. You have to persist the token to a database if you want the access token to remain the same in every request
-        "retrieve" => function() {return $access_token}; # The lambda which will retrieve the access token. This is called internally by the sdk on every request so the 
+        "store" => function($access_token) {}, # The closure which will persist the access token to a database. You have to persist the token to a database if you want the access token to remain the same in every request
+        "retrieve" => function() {return $access_token} # The lambda which will retrieve the access token. This is called internally by the sdk on every request so the 
         #the access token can be persisted between requests
     );
 );
@@ -41,8 +124,10 @@ In development the sdk caches the access token in memory so you don't need to pr
 ## Get
 ```php
 <?php
-Playlyfe::get('', # The api route to get data from
-    array(), # The query params that you want to send to the route
+Playlyfe::get(
+array(
+    'route': => '', # The api route to get data from
+    'query' => array( 'player_id' => 'stud'), # The query params that you want to send to the route
     false # Whether you want the response to be in raw string form or json
 )
 ?>
@@ -73,7 +158,6 @@ Playlyfe::patch(
 Playlyfe::delete(
     route: '' # The api route to delete the component
     query: {} # The query params that you want to send to the route
-    body: {} # The data which will specify which component you will want to delete in the route
 )
 ?>
 ```
@@ -98,61 +182,9 @@ Playlyfe::exchange_code($code)
 ## Errors
 A ```PlaylyfeException``` is thrown whenever a curl error occurs in each call.The Exception contains a name and message field which can be used to determine the type of error that occurred.
 
-## Example Useage
-Given below is a simple example of using this client to check if a player exists and create it if it doesn't.
-
-```php
-<?php
-
-  session_start();
-
-  ini_set('display_errors', 'on');
-
-  require_once("pl_client.php");
-
-  const CLIENT_ID     = 'YOUR_CLIENT_ID';
-  const CLIENT_SECRET = 'YOUR_CLIENT_SECRET';
-
-  $player_id = 'test';
-
-  $client = new Playlyfe\Client(array('client_id' => CLIENT_ID, 'client_secret' => CLIENT_SECRET));
-
-  // If we cant find an access token fetch it
-  if (!isset($_SESSION['access_token']) || empty($_SESSION['access_token'])) {
-
-      // IMPORTANT: You should ideally store the access token in a external persistence layer
-      // like a cache or database. Over here we use the session object for demonstration purposes.
-      $_SESSION['access_token'] = $client->getAccessToken();
-
-  } else {
-
-      $client->setAccessToken($_SESSION['access_token']);
-  }
-
-  // Fetch the profile of a test player
-  $response = $client->api('GET', '/player', array('player_id' => $player_id));
-
-  // Player profile does not exist, create it
-  if ($response['code'] == 404) {
-    $response = $client->api('POST', '/game/players', array(), array('id' => $player_id));
-    if ($response['code'] == 200) {
-      $profile = $response['result'];
-    } else {
-      print "ERROR: ". json_encode($response);
-    }
-  } else {
-    $profile = $response['result'];
-
-  }
-
-  print "PLAYER PROFILE:\n" . json_encode($profile);
-
-?>
-```
-
 License
 =======
-Playlyfe PHP SDK v0.4.1  
+Playlyfe PHP SDK v0.5.2  
 http://dev.playlyfe.com/  
 Copyright(c) 2013-2014, Playlyfe Technologies, developers@playlyfe.com  
 

@@ -30,13 +30,11 @@
     const AUTHORIZATION_ENDPOINT = 'https://playlyfe.com/auth/token';
     const API_ENDPOINT = 'https://api.playlyfe.com/v1';
 
-    /**
-     * HTTP Methods
-     */
     const HTTP_METHOD_GET    = 'GET';
     const HTTP_METHOD_POST   = 'POST';
     const HTTP_METHOD_DELETE = 'DELETE';
     const HTTP_METHOD_PATCH   = 'PATCH';
+    const HTTP_METHOD_PUT   = 'PUT';
 
     private function __construct() {}
 
@@ -60,7 +58,7 @@
       }
       else {
         self::$store = function($access_token) {
-          print "Storing access token\n";
+          #print "Storing access token\n";
         };
       }
 
@@ -68,7 +66,10 @@
         self::$retrieve = $params['retrieve'];
       }
 
-      if(self::$type == 'code'){
+      if(self::$type == 'client'){
+        self::get_access_token();
+      }
+      else {
         if(array_key_exists('redirect_uri', $params)) {
           self::$redirect_uri = $params['redirect_uri'];
         }
@@ -76,12 +77,12 @@
           throw new PlaylyfeException('init_failed', "You must pass in a redirect_uri for the auth code flow");
         }
       }
-      else {
-        self::get_access_token();
-      }
     }
 
     public static function exchange_code($code) {
+      if($code == null) {
+        throw new PlaylyfeException('init_failed', "You must pass in a code in exchange_code for the auth code flow");
+      }
       self::$code = $code;
       self::get_access_token();
     }
@@ -93,32 +94,43 @@
 
     private static function get_access_token() {
       if(self::$type == 'client') {
-        print("Getting Access Token\n");
+        #print("Getting Access Token\n");
         $data = array(
           'client_id' => self::$client_id,
           'client_secret' => self::$client_secret,
           'grant_type' => 'client_credentials'
         );
         $access_token = self::executeRequest('POST', self::AUTHORIZATION_ENDPOINT, null, $data);
-        $expires_in = intval($access_token['expires_in']);
-        $expires_at = time() + $expires_in;
-        unset($access_token['expires_in']);
-        $access_token['expires_at'] = $expires_at;
+      }
+      else {
+        #print("Getting Access Token using Code\n");
+        $data = array(
+          'client_id' => self::$client_id,
+          'client_secret' => self::$client_secret,
+          'grant_type' => 'authorization_code',
+          'code' => self::$code,
+          'redirect_uri' => self::redirect_uri
+        );
+        $access_token = self::executeRequest('POST', self::AUTHORIZATION_ENDPOINT, null, $data);
+      }
+      $expires_in = intval($access_token['expires_in']);
+      $expires_at = time() + $expires_in;
+      unset($access_token['expires_in']);
+      $access_token['expires_at'] = $expires_at;
 
-        self::$store->__invoke($access_token);
+      self::$store->__invoke($access_token);
 
-        if(is_null(self::$retrieve)) {
-          self::$retrieve = function() use ($access_token) {
-            return $access_token;
-          };
-        }
+      if(is_null(self::$retrieve)) {
+        self::$retrieve = function() use ($access_token) {
+          return $access_token;
+        };
       }
     }
 
     private static function check_token(&$query) {
       $token = self::$retrieve->__invoke();
       if (time() >= $token['expires_at']){
-        print("Token Expired\n");
+        #print("Token Expired\n");
         self::get_access_token();
         $token = self::$retrieve->__invoke();
       }
@@ -140,9 +152,9 @@
       return self::executeRequest(self::HTTP_METHOD_PATCH, self::API_ENDPOINT . $route, $query, $body);
     }
 
-    public static function delete($route = '', $query = array(), $body = array()) {
+    public static function delete($route = '', $query = array()) {
       self::check_token($query);
-      return self::executeRequest(self::HTTP_METHOD_DELETE, self::API_ENDPOINT . $route, $query, $body);
+      return self::executeRequest(self::HTTP_METHOD_DELETE, self::API_ENDPOINT . $route, $query);
     }
 
     /**
