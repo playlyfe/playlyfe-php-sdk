@@ -83,6 +83,9 @@
   assert($players["data"] != null);
   assert($players["data"]["0"]["id"] != null);
 
+  $players_raw = Playlyfe::get('/players', array('player_id' => 'student1', 'limit' => 1 ), true);
+  assert(gettype($players_raw) == 'string');
+
   $player_id = 'student1';
   $player = Playlyfe::get('/player', array( 'player_id' => $player_id ));
   assert($player["id"] == "student1");

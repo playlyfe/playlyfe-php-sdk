@@ -127,7 +127,7 @@
 
     public static function get($route = '', $query = array(), $raw = false) {
       self::check_token($query);
-      return self::executeRequest(self::HTTP_METHOD_GET, self::API_ENDPOINT . $route, $query, $raw);
+      return self::executeRequest(self::HTTP_METHOD_GET, self::API_ENDPOINT . $route, $query, null, $raw);
     }
 
     public static function post($route = '', $query = array(), $body = array()) {
@@ -211,7 +211,7 @@
         if ($curl_error = curl_error($ch)) {
           throw new Exception($curl_error, PlaylyfeException::CURL_ERROR);
         } else {
-          if($raw == true){
+          if($raw === true){
             return $result;
           }
           else {
