@@ -2,20 +2,13 @@
 
   class PlaylyfeException extends Exception {
 
-    const CURL_NOT_FOUND          = 0x01;
-    const CURL_ERROR              = 0x02;
-    const INVALID_GRANT_TYPE      = 0x03;
-    const CERTIFICATE_NOT_FOUND   = 0x04;
-    const REQUIRE_PARAMS_AS_ARRAY = 0x05;
-    const MISSING_PARAMETER       = 0x06;
-    const GRANT_TYPE_ERROR                   = 0x07;
-    const INVALID_CLIENT_AUTHENTICATION_TYPE = 0x08;
-    const INVALID_ACCESS_TOKEN_TYPE          = 0x09;
+    const CURL_NOT_FOUND = 0x01;
+    const CURL_ERROR = 0x02;
 
-    private $name;
-    protected $message;
+    public $name;
+    public $message;
 
-    function __contruct($name, $message) {
+    function __construct($name, $message) {
       $this->name = $name;
       $this->message = $message;
     }
@@ -59,19 +52,7 @@
         self::$type = $params['type'];
       }
       else {
-        throw new PlaylyfeException("You must pass in a type whether 'client' for client credentials flow or 'code' for auth code flow");
-      }
-
-      if(self::$type == 'code'){
-        if(array_key_exists('redirect_uri', $params)) {
-          self::$redirect_uri = $params['redirect_uri'];
-        }
-        else {
-          throw new PlaylyfeException("You must pass in a redirect_uri for the auth code flow");
-        }
-      }
-      else {
-        self::get_access_token();
+        throw new PlaylyfeException('init_failed', "You must pass in a type whether 'client' for client credentials flow or 'code' for auth code flow");
       }
 
       if(array_key_exists('store', $params)) {
@@ -79,13 +60,24 @@
       }
       else {
         self::$store = function($access_token) {
-          print 'Storing access token';
-          print_r($access_token);
+          print "Storing access token\n";
         };
       }
 
       if(array_key_exists('retrieve', $params)) {
         self::$retrieve = $params['retrieve'];
+      }
+
+      if(self::$type == 'code'){
+        if(array_key_exists('redirect_uri', $params)) {
+          self::$redirect_uri = $params['redirect_uri'];
+        }
+        else {
+          throw new PlaylyfeException('init_failed', "You must pass in a redirect_uri for the auth code flow");
+        }
+      }
+      else {
+        self::get_access_token();
       }
     }
 
@@ -100,8 +92,8 @@
     }
 
     private static function get_access_token() {
-      if(self::$type == 'client'){
-        print("Getting Access Token");
+      if(self::$type == 'client') {
+        print("Getting Access Token\n");
         $data = array(
           'client_id' => self::$client_id,
           'client_secret' => self::$client_secret,
@@ -113,7 +105,7 @@
         unset($access_token['expires_in']);
         $access_token['expires_at'] = $expires_at;
 
-        #self::$store->__invoke($access_token);
+        self::$store->__invoke($access_token);
 
         if(is_null(self::$retrieve)) {
           self::$retrieve = function() use ($access_token) {
@@ -126,31 +118,31 @@
     private static function check_token(&$query) {
       $token = self::$retrieve->__invoke();
       if (time() >= $token['expires_at']){
-        print('Token Expired');
+        print("Token Expired\n");
         self::get_access_token();
         $token = self::$retrieve->__invoke();
       }
       $query['access_token'] = $token['access_token'];
     }
 
-    public static function get($route = '', $query = array()) {
+    public static function get($route = '', $query = array(), $raw = false) {
       self::check_token($query);
-      self::executeRequest(self::HTTP_METHOD_GET, self::API_ENDPOINT . $route, $query);
+      return self::executeRequest(self::HTTP_METHOD_GET, self::API_ENDPOINT . $route, $query, $raw);
     }
 
     public static function post($route = '', $query = array(), $body = array()) {
       self::check_token($query);
-      self::executeRequest(self::HTTP_METHOD_POST, self::API_ENDPOINT . $route, $query, $body);
+      return self::executeRequest(self::HTTP_METHOD_POST, self::API_ENDPOINT . $route, $query, $body);
     }
 
     public static function patch($route = '', $query = array(), $body = array()) {
       self::check_token($query);
-      self::executeRequest(self::HTTP_METHOD_PATCH, self::API_ENDPOINT . $route, $query, $body);
+      return self::executeRequest(self::HTTP_METHOD_PATCH, self::API_ENDPOINT . $route, $query, $body);
     }
 
     public static function delete($route = '', $query = array(), $body = array()) {
       self::check_token($query);
-      self::executeRequest(self::HTTP_METHOD_DELETE, self::API_ENDPOINT . $route, $query, $body);
+      return self::executeRequest(self::HTTP_METHOD_DELETE, self::API_ENDPOINT . $route, $query, $body);
     }
 
     /**
@@ -163,7 +155,7 @@
      * @param array  $http_headers HTTP Headers
      * @return array
      */
-    private static function executeRequest($http_method = self::HTTP_METHOD_GET, $url, $query = array(), $body = array())
+    private static function executeRequest($http_method = self::HTTP_METHOD_GET, $url, $query = array(), $body = array(), $raw = false)
     {
         $curl_options = array(
             CURLOPT_RETURNTRANSFER => true,
@@ -172,6 +164,7 @@
         );
 
         switch($http_method) {
+            case self::HTTP_METHOD_PATCH:
             case self::HTTP_METHOD_POST:
                 $curl_options[CURLOPT_POST] = true;
                 /* No break */
@@ -187,8 +180,9 @@
                 break;
         }
 
-        print($url);
-        print("\n");
+        #print($url);
+        #print("\n");
+
         $curl_options[CURLOPT_URL] = $url;
         $curl_options[CURLOPT_POSTFIELDS] = json_encode($body);
         $curl_options[CURLOPT_HTTPHEADER] = array(
@@ -217,14 +211,19 @@
         if ($curl_error = curl_error($ch)) {
           throw new Exception($curl_error, PlaylyfeException::CURL_ERROR);
         } else {
-          $json_decode = json_decode($result, true);
+          if($raw == true){
+            return $result;
+          }
+          else {
+            $json_decode = json_decode($result, true);
+          }
         }
         curl_close($ch);
         if(array_key_exists('error', $json_decode)) {
-          throw new PlaylyfeException("Error: " . $json_decode['error'] . "  ". $json_decode['error_description'],  1);
+          throw new PlaylyfeException($json_decode['error'], $json_decode['error_description']);
         }
         else {
-          print_r($json_decode);
+          #print_r($json_decode);
           return $json_decode;
         }
     }
