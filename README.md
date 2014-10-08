@@ -1,7 +1,20 @@
 Playlyfe PHP SDK
 ================
+This is a basic OAuth 2.0 PHP client SDK for the Playlyfe API. It currently only supports the `client_credentials` flow and `authorization code flow`.  
+To understand how the complete api works checkout [The Playlyfe Api](http://dev.playlyfe.com/docs/api) for more information.
 
-This is a basic OAuth 2.0 PHP client SDK for the Playlyfe API. It currently only supports the `client_credentials` flow.
+Requires
+--------
+Php >= 5.5.9
+
+Install
+----------
+Just include the file in your project like this
+```php
+require_once("lib/playlyfe.php");
+```
+
+
 
 Given below is a simple example of using this client to check if a player exists and create it if it doesn't.
 
@@ -71,3 +84,29 @@ api(method, path, query, body)
 ------------------------------
 Make an API request using the specified `method` to `path`. Query parameters can be put in `query` and the request body in `body`.
 
+Documentation
+-------------------------------
+
+License
+=======
+Playlyfe PHP SDK v0.4.1  
+http://dev.playlyfe.com/  
+Copyright(c) 2013-2014, Playlyfe Technologies, developers@playlyfe.com  
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:  
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.  
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
