@@ -87,7 +87,7 @@
   assert(gettype($players_raw) == 'string');
 
   $player_id = 'student1';
-  $player = Playlyfe::get('/player', array( 'player_id' => $player_id ));
+  $player = Playlyfe::api('GET', '/player', array( 'player_id' => $player_id ));
   assert($player["id"] == "student1");
   assert($player["alias"] == "Student1");
   assert($player["enabled"] == true);
@@ -127,7 +127,12 @@
       },
       'retrieve' => function() {
         print 'Retrieving';
-        return $_SESSION['access_token'];
+        if(array_key_exists('access_token', $_SESSION)){
+          return $_SESSION['access_token'];
+        }
+        else {
+          return null;
+        }
       }
     )
   );

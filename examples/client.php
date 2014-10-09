@@ -36,25 +36,46 @@
           session_start();
           ini_set('display_errors', 'on');
           require_once("../lib/playlyfe.php");
-
+          if(array_key_exists('logout', $_GET)) {
+            session_destroy();
+          }
           Playlyfe::init(
             array(
               'client_id' => "Zjc0MWU0N2MtODkzNS00ZWNmLWEwNmYtY2M1MGMxNGQ1YmQ4",
               'client_secret' => "YzllYTE5NDQtNDMwMC00YTdkLWFiM2MtNTg0Y2ZkOThjYTZkMGIyNWVlNDAtNGJiMC0xMWU0LWI2NGEtYjlmMmFkYTdjOTI3",
-              'type' => 'client'
+              'type' => 'client',
+              'store' => function($access_token) {
+                print 'Storing';
+                $_SESSION['access_token'] = $access_token;
+              },
+              'retrieve' => function() {
+                print 'Retrieving';
+                if(array_key_exists('access_token', $_SESSION)){
+                  return $_SESSION['access_token'];
+                }
+                else {
+                  return null;
+                }
+              }
             )
           );
-
           $players = Playlyfe::get('/players', array('player_id' => 'student1'));
           echo "<li class='list-group-item disabled'><h2>Players</h2></li>";
           foreach($players["data"] as $value){
             $id = $value["id"];
             echo "<li class='list-group-item'><h3>$id</h3></li>";
           }
+
+          #$picture = Playlyfe::get('/assets/metrics/knowledge', array('player_id' => 'student1'), true);
+          #$bin = base64_encode($picture);
+          #print "<img src='data:image/jpg;base64,$bin'>"
         ?>
         </ul>
       </div>
     </div>
+    <img src='../lib/image.php?metric=knowledge' />
+    <img src='../lib/image.php?metric=levels' />
+    <img src='../lib/image.php?metric=badges' />
   </body>
  </html>
 

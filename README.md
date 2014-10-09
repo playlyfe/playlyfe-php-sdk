@@ -1,4 +1,5 @@
-Playlyfe PHP SDK
+Playlyfe PHP SDK[![Latest Stable Version](https://poser.pugx.org/playlyfe/playlyfe/v/stable.svg)](https://packagist.org/packages/playlyfe/playlyfe)
+[![Total Downloads](https://poser.pugx.org/playlyfe/playlyfe/downloads.svg)](https://packagist.org/packages/playlyfe/playlyfe)
 ================
 This is the official OAuth 2.0 PHP client SDK for the Playlyfe API.  
 It supports the `client_credentials` and `authorization code` OAuth 2.0 flows.    
@@ -62,13 +63,13 @@ Example: POST
 process =  Playlyfe::post("/definitions/processes/collect", 
   array( player_id: 'johny'),
   array( name: "My First Process" )
-)
+);
 
 #To play a process
 Playlyfe::post("/processes/#{$process_id}/play",
   array( player_id: 'johny'),
   array( trigger: "#{$trigger}" )
-)
+);
 ?>
 ```
 
@@ -125,13 +126,25 @@ Playlyfe::init(
 ```
 In development the sdk caches the access token in memory so you don't need to provide the store and retrieve lambdas. But in production it is highly recommended to persist the token to a database. It is very simple and easy to do it with redis. You can see the test cases for more examples.
 
+
+## API
+```php
+<?php
+Playlyfe::api('GET' # can be GET/POST/PUT/PATCH/DELETE
+    '', # The api route to get data from
+    array(), # The query params that you want to send to the route
+    array() # The body data
+);
+?>
+```
+
 ## Get
 ```php
 <?php
 Playlyfe::get( '', # The api route to get data from
     array(), # The query params that you want to send to the route
     false # Whether you want the response to be in raw string form or json
-)
+);
 ?>
 ```
 ## Post
@@ -149,7 +162,16 @@ Playlyfe::post('' # The api route to post data to
 Playlyfe::patch('' # The api route to patch data
     array() # The query params that you want to send to the route
     array() # The data you want to update in the api this will be automagically converted to json
-)
+);
+?>
+```
+## Put
+```php
+<?php
+Playlyfe::put('' # The api route to patch data
+    array() # The query params that you want to send to the route
+    array() # The data you want to update in the api this will be automagically converted to json
+);
 ?>
 ```
 ## Delete
@@ -157,13 +179,13 @@ Playlyfe::patch('' # The api route to patch data
 <?php
 Playlyfe::delete('' # The api route to delete the component
     array() # The query params that you want to send to the route
-)
+);
 ?>
 ```
 ## Get Login Url
 ```php
 <?php
-Playlyfe::get_login_url()
+Playlyfe::get_login_url();
 #This will return the url to which the user needs to be redirected for the user to login. You can use this directly in your views.
 ?>
 ```
@@ -171,7 +193,7 @@ Playlyfe::get_login_url()
 ## Exchange Code
 ```php
 <?php
-Playlyfe::exchange_code($code)
+Playlyfe::exchange_code($code);
 #This is used in the auth code flow so that the sdk can get the access token.
 #Before any request to the playlyfe api is made this has to be called atleast once. 
 #This should be called in the the script/route which you specified in your redirect_uri
@@ -183,7 +205,7 @@ A ```PlaylyfeException``` is thrown whenever a curl error occurs in each call.Th
 
 License
 =======
-Playlyfe PHP SDK v0.5.2  
+Playlyfe PHP SDK v0.5.3  
 http://dev.playlyfe.com/  
 Copyright(c) 2013-2014, Playlyfe Technologies, developers@playlyfe.com  
 

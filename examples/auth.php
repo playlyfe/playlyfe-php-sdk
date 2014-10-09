@@ -35,7 +35,36 @@
           ini_set('display_errors', 'on');
           require_once("../lib/playlyfe.php");
 
-          if(array_key_exists('code', $_GET)){
+          Playlyfe::init(
+            array(
+              "client_id" => "NzQ3OTExNTEtM2UxZC00N2IyLTgxM2YtZWJkNWFlYTg3YjBm",
+              "client_secret" => "ODc4YzQxYmItYzk1NS00Y2I3LWFjNWItZDI0YzczYTI2MjRiMjQ5YzUxZjAtNGVlMS0xMWU0LTg3YWMtNmRhODZiZjAyMmUx",
+              "type" => 'code',
+              "redirect_uri" => 'http://example.playlyfe.com/auth.php',
+              'store' => function($access_token) {
+                print 'Storing';
+                $_SESSION['access_token'] = $access_token;
+              },
+              'retrieve' => function() {
+                print 'Retrieving';
+                if(array_key_exists('access_token', $_SESSION)){
+                  return $_SESSION['access_token'];
+                }
+                else {
+                  return null;
+                }
+              }
+            )
+          );
+
+          if(array_key_exists('logout', $_GET)) {
+            session_destroy();
+          }
+
+          if(array_key_exists('code', $_GET) or array_key_exists('access_token', $_SESSION)){
+            if(array_key_exists('code', $_GET)){
+              Playlyfe::exchange_code($_GET['code']);
+            }
             $players = Playlyfe::get('/players', array('player_id' => 'student1'));
             echo "<ul>";
             echo "<li class='list-group-item disabled'><h2>Players</h2></li>";
@@ -46,14 +75,6 @@
             echo "</ul>";
           }
           else {
-            Playlyfe::init(
-              array(
-                "client_id" => "NzQ3OTExNTEtM2UxZC00N2IyLTgxM2YtZWJkNWFlYTg3YjBm",
-                "client_secret" => "ODc4YzQxYmItYzk1NS00Y2I3LWFjNWItZDI0YzczYTI2MjRiMjQ5YzUxZjAtNGVlMS0xMWU0LTg3YWMtNmRhODZiZjAyMmUx",
-                "type" => 'code',
-                "redirect_uri" => 'http://example.playlyfe.com/auth.php'
-              )
-            );
             $login_url = Playlyfe::get_login_url();
             echo '<h2>Please Login using your Playlyfe Account</h2>';
             echo "<a href='$login_url'>Sign in</a>";

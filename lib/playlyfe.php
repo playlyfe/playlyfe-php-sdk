@@ -4,6 +4,7 @@
 
     const CURL_NOT_FOUND = 0x01;
     const CURL_ERROR = 0x02;
+    const CERTIFICATE_NOT_FOUND = 0x03;
 
     public $name;
     public $message;
@@ -25,7 +26,7 @@
     private static $store;
     private static $retrieve;
 
-    public static $certificate_file;
+    private static $certificate_file;
 
     const AUTHORIZATION_ENDPOINT = 'https://playlyfe.com/auth/token';
     const API_ENDPOINT = 'https://api.playlyfe.com/v1';
@@ -42,6 +43,10 @@
       if (!extension_loaded('curl')) {
         throw new Exception('The PHP exention curl must be installed to use this library.', PlaylyfeException::CURL_NOT_FOUND);
       }
+      #self::$certificate_file = '../lib/DigiCertGlobalRootCA';
+      #if (!is_file(self::$certificate_file)) {
+      #  throw new InvalidArgumentException('The certificate file was not found', PlaylyfeException::CERTIFICATE_NOT_FOUND);
+      #}
 
       self::$client_id = $params['client_id'];
       self::$client_secret = $params['client_secret'];
@@ -67,7 +72,14 @@
       }
 
       if(self::$type == 'client'){
-        self::get_access_token();
+        if(!is_null(self::$retrieve)) {
+          if(is_null(self::$retrieve->__invoke())) {
+            self::get_access_token();
+          }
+        }
+        else {
+          self::get_access_token();
+        }
       }
       else {
         if(array_key_exists('redirect_uri', $params)) {
@@ -92,9 +104,13 @@
       return "https://playlyfe.com/auth?" . http_build_query($query, null, '&');
     }
 
+    public static function get_logout_url() {
+      return "";
+    }
+
     private static function get_access_token() {
       if(self::$type == 'client') {
-        #print("Getting Access Token\n");
+        print("Getting Access Token\n");
         $data = array(
           'client_id' => self::$client_id,
           'client_secret' => self::$client_secret,
@@ -130,29 +146,38 @@
     private static function check_token(&$query) {
       $token = self::$retrieve->__invoke();
       if (time() >= $token['expires_at']){
-        #print("Token Expired\n");
         self::get_access_token();
         $token = self::$retrieve->__invoke();
       }
       $query['access_token'] = $token['access_token'];
     }
 
-    public static function get($route = '', $query = array(), $raw = false) {
+    public static function api($http_method = self::HTTP_METHOD_GET, $route , $query = array(), $body = array(), $raw = false) {
+      self::check_token($query);
+      return self::executeRequest($http_method, self::API_ENDPOINT . $route, $query, $body, $raw);
+    }
+
+    public static function get($route, $query = array(), $raw = false) {
       self::check_token($query);
       return self::executeRequest(self::HTTP_METHOD_GET, self::API_ENDPOINT . $route, $query, null, $raw);
     }
 
-    public static function post($route = '', $query = array(), $body = array()) {
+    public static function post($route, $query = array(), $body = array()) {
       self::check_token($query);
       return self::executeRequest(self::HTTP_METHOD_POST, self::API_ENDPOINT . $route, $query, $body);
     }
 
-    public static function patch($route = '', $query = array(), $body = array()) {
+    public static function patch($route, $query = array(), $body = array()) {
       self::check_token($query);
       return self::executeRequest(self::HTTP_METHOD_PATCH, self::API_ENDPOINT . $route, $query, $body);
     }
 
-    public static function delete($route = '', $query = array()) {
+    public static function put($route, $query = array(), $body = array()) {
+      self::check_token($query);
+      return self::executeRequest(self::HTTP_METHOD_PUT, self::API_ENDPOINT . $route, $query, $body);
+    }
+
+    public static function delete($route, $query = array()) {
       self::check_token($query);
       return self::executeRequest(self::HTTP_METHOD_DELETE, self::API_ENDPOINT . $route, $query);
     }
@@ -176,6 +201,7 @@
         );
 
         switch($http_method) {
+            case self::HTTP_METHOD_PUT:
             case self::HTTP_METHOD_PATCH:
             case self::HTTP_METHOD_POST:
                 $curl_options[CURLOPT_POST] = true;
@@ -216,6 +242,10 @@
         }
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        if($raw == true) {
+          curl_setopt($ch, CURLOPT_HEADER, 0);
+          curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
+        }
         $result = curl_exec($ch);
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
