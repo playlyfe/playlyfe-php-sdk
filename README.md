@@ -17,18 +17,23 @@ Just include the file in your project like this
 require_once("lib/playlyfe.php");
 ?>
 ```
-
+or if you are using composer then add this to your composer.json file
+```json
+"require": {
+    "playlyfe/playlyfe": "0.5.2"
+}
+```
 Using
 -----
 ### Create a client 
   If you haven't created a client for your game yet just head over to [Playlyfe](http://playlyfe.com) and login into your account, and go to the game settings and click on client  
   **1.Client Credentials Flow**  
     In the client page click on whitelabel client  
-    ![alt text](https://github.com/pyros2097/playlyfe-ruby-sdk/raw/master/images/client.png "")
+    ![alt text](https://github.com/playlyfe/playlyfe-php-sdk/raw/master/images/client.png "")
 
   **2.Authorization Code Flow**  
     In the client page click on backend client and specify the redirect uri this will be the url where you will be redirected to get the token
-    ![alt text](https://github.com/pyros2097/playlyfe-ruby-sdk/raw/master/images/auth.png "")
+    ![alt text](https://github.com/playlyfe/playlyfe-php-sdk/raw/master/images/auth.png "")
 
 > Note: If you want to test the sdk in staging you can click the Test Client button. You need to pass the player_id in the query in every request also.
 
@@ -36,47 +41,42 @@ Using
 
 The Playlyfe class allows you to make rest api calls like GET, POST, .. etc
 Example: GET
-```ruby
+```php
+<?php
 # To get infomation of the player johny
-player = Playlyfe.get(
-  route: '/player',
-  query: { player_id: 'johny' }
-)
-puts player['id']
-puts player['scores']
+player = Playlyfe::get('/player', array( player_id: 'johny' ));
+
+print_r(player['id']);
+print_r(player['scores']):
 
 # To get all available processes with query
-processes = Playlyfe.get(
-  route: '/processes',
-  query: { player_id: 'johny' }
-)
-puts processes
+processes = Playlyfe::get('/processes', array( player_id: 'johny' ));
+print_r(processes);
+?>
 ```
 
 Example: POST
-```ruby
+```php
+<?php
 # To start a process
-process =  Playlyfe.post(
-  route: "/definitions/processes/collect",
-  query: { player_id: 'johny' },
-  body: { name: "My First Process" }
+process =  Playlyfe::post("/definitions/processes/collect", 
+  array( player_id: 'johny'),
+  array( name: "My First Process" )
 )
 
 #To play a process
-Playlyfe.post(
-  route: "/processes/#{@process_id}/play",
-  query: { player_id: 'johny' },
-  body: { trigger: "#{@trigger}" }
+Playlyfe::post("/processes/#{$process_id}/play",
+  array( player_id: 'johny'),
+  array( trigger: "#{$trigger}" )
 )
+?>
 ```
 
 # Examples
 ## 1. Client Credentials Flow
 ```php
 <?php
-  session_start();
-  ini_set('display_errors', 'on');
-  require_once("pl_client.php");
+  require_once("playlyfe.php");
 
   Playlyfe::init(
     array(
@@ -94,10 +94,14 @@ Playlyfe.post(
 ## 2. Authorization Code Flow
 ```php
 <?php
-  session_start();
-  ini_set('display_errors', 'on');
-  require_once("pl_client.php");
-
+  Playlyfe::init(
+    array(
+      "client_id" => "NzQ3OTExNTEtM2UxZC00N2IyLTgxM2YtZWJkNWFlYTg3YjBm",
+      "client_secret" => "ODc4YzQxYmItYzk1NS00Y2I3LWFjNWItZDI0YzczYTI2MjRiMjQ5YzUxZjAtNGVlMS0xMWU0LTg3YWMtNmRhODZiZjAyMmUx",
+      "type" => 'code',
+      "redirect_uri" => 'http://example.playlyfe.com/auth.php'
+    )
+  );
 ?>
 ```
 
@@ -106,7 +110,7 @@ Playlyfe.post(
 You can initiate a client by giving the client_id and client_secret params
 ```php
 <?php
-Playlyfe.init(
+Playlyfe::init(
     array(
         "client_id" => "",
         "client_secret" => "",
@@ -124,10 +128,8 @@ In development the sdk caches the access token in memory so you don't need to pr
 ## Get
 ```php
 <?php
-Playlyfe::get(
-array(
-    'route': => '', # The api route to get data from
-    'query' => array( 'player_id' => 'stud'), # The query params that you want to send to the route
+Playlyfe::get( '', # The api route to get data from
+    array(), # The query params that you want to send to the route
     false # Whether you want the response to be in raw string form or json
 )
 ?>
@@ -135,29 +137,26 @@ array(
 ## Post
 ```php
 <?php
-Playlyfe::post(
-    route: '' # The api route to post data to
-    query: {}, # The query params that you want to send to the route
-    body: {}. # The data you want to post to the api this will be automagically converted to json
+Playlyfe::post('' # The api route to post data to
+    array(), # The query params that you want to send to the route
+    array(). # The data you want to post to the api this will be automagically converted to json
 )
 ?>
 ```
 ## Patch
 ```php
 <?php
-Playlyfe::patch(
-    route: '' # The api route to patch data
-    query: {} # The query params that you want to send to the route
-    body: {} # The data you want to update in the api this will be automagically converted to json
+Playlyfe::patch('' # The api route to patch data
+    array() # The query params that you want to send to the route
+    array() # The data you want to update in the api this will be automagically converted to json
 )
 ?>
 ```
 ## Delete
 ```php
 <?php
-Playlyfe::delete(
-    route: '' # The api route to delete the component
-    query: {} # The query params that you want to send to the route
+Playlyfe::delete('' # The api route to delete the component
+    array() # The query params that you want to send to the route
 )
 ?>
 ```
@@ -175,7 +174,7 @@ Playlyfe::get_login_url()
 Playlyfe::exchange_code($code)
 #This is used in the auth code flow so that the sdk can get the access token.
 #Before any request to the playlyfe api is made this has to be called atleast once. 
-#This should be called in the the route/controller which you specified in your redirect_uri
+#This should be called in the the script/route which you specified in your redirect_uri
 ?>
 ```
 

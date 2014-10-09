@@ -1,0 +1,11 @@
+{
+    "name": "playlyfe/playlyfe",
+    "type": "library",
+    "keywords": ["Playlyfe","Gamification"],
+    "homepage": "http://github.com/playlyfe/playlyfe-php-sdk",
+    "description": "This is the official OAuth 2.0 PHP client SDK for the Playlyfe API",
+    "require": {
+      "php": ">=5.5.0",
+      "ext-curl": "*"
+    }
+}
