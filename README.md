@@ -1,5 +1,4 @@
 Playlyfe PHP SDK[![Latest Stable Version](https://poser.pugx.org/playlyfe/playlyfe/v/stable.svg)](https://packagist.org/packages/playlyfe/playlyfe)
-[![Total Downloads](https://poser.pugx.org/playlyfe/playlyfe/downloads.svg)](https://packagist.org/packages/playlyfe/playlyfe)
 ================
 This is the official OAuth 2.0 PHP client SDK for the Playlyfe API.  
 It supports the `client_credentials` and `authorization code` OAuth 2.0 flows.    
