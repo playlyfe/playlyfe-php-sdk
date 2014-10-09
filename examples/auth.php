@@ -33,7 +33,7 @@
         <?php
           session_start();
           ini_set('display_errors', 'on');
-          require_once("../lib/playlyfe.php");
+          require_once("../src/playlyfe.php");
 
           Playlyfe::init(
             array(

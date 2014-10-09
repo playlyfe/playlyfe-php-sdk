@@ -35,7 +35,7 @@
         <?php
           session_start();
           ini_set('display_errors', 'on');
-          require_once("../lib/playlyfe.php");
+          require_once("../src/playlyfe.php");
           if(array_key_exists('logout', $_GET)) {
             session_destroy();
           }
@@ -73,9 +73,9 @@
         </ul>
       </div>
     </div>
-    <img src='../lib/image.php?metric=knowledge' />
-    <img src='../lib/image.php?metric=levels' />
-    <img src='../lib/image.php?metric=badges' />
+    <img src='../src/image.php?metric=knowledge' />
+    <img src='../src/image.php?metric=levels' />
+    <img src='../src/image.php?metric=badges' />
   </body>
  </html>
 
