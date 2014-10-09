@@ -1,4 +1,4 @@
-Playlyfe PHP SDK[![Latest Stable Version](https://poser.pugx.org/playlyfe/playlyfe/v/stable.svg)](https://packagist.org/packages/playlyfe/playlyfe)
+Playlyfe PHP SDK    [![Latest Stable Version](https://poser.pugx.org/playlyfe/playlyfe/v/stable.svg)](https://packagist.org/packages/playlyfe/playlyfe)
 ================
 This is the official OAuth 2.0 PHP client SDK for the Playlyfe API.  
 It supports the `client_credentials` and `authorization code` OAuth 2.0 flows.    
@@ -20,7 +20,7 @@ require_once("lib/playlyfe.php");
 or if you are using composer then add this to your composer.json file
 ```json
 "require": {
-    "playlyfe/playlyfe": "0.5.2"
+    "playlyfe/playlyfe": "dev-master"
 }
 ```
 Using
@@ -29,11 +29,11 @@ Using
   If you haven't created a client for your game yet just head over to [Playlyfe](http://playlyfe.com) and login into your account, and go to the game settings and click on client  
   **1.Client Credentials Flow**  
     In the client page click on whitelabel client  
-    ![alt text](https://github.com/playlyfe/playlyfe-php-sdk/raw/master/images/client.png "")
+    ![alt text](https://github.com/pyros2097/playlyfe-php-sdk/raw/master/images/client.png "")
 
   **2.Authorization Code Flow**  
     In the client page click on backend client and specify the redirect uri this will be the url where you will be redirected to get the token
-    ![alt text](https://github.com/playlyfe/playlyfe-php-sdk/raw/master/images/auth.png "")
+    ![alt text](https://github.com/pyros2097/playlyfe-php-sdk/raw/master/images/auth.png "")
 
 > Note: If you want to test the sdk in staging you can click the Test Client button. You need to pass the player_id in the query in every request also.
 
