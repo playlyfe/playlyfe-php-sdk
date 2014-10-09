@@ -48,7 +48,7 @@
                 print 'Storing';
                 $_SESSION['access_token'] = $access_token;
               },
-              'retrieve' => function() {
+              'load' => function() {
                 print 'Retrieving';
                 if(array_key_exists('access_token', $_SESSION)){
                   return $_SESSION['access_token'];

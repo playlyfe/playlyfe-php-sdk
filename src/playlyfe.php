@@ -24,7 +24,7 @@
     private static $code;
 
     private static $store;
-    private static $retrieve;
+    private static $load;
 
     private static $certificate_file;
 
@@ -67,13 +67,13 @@
         };
       }
 
-      if(array_key_exists('retrieve', $params)) {
-        self::$retrieve = $params['retrieve'];
+      if(array_key_exists('load', $params)) {
+        self::$load = $params['load'];
       }
 
       if(self::$type == 'client'){
-        if(!is_null(self::$retrieve)) {
-          if(is_null(self::$retrieve->__invoke())) {
+        if(!is_null(self::$load)) {
+          if(is_null(self::$load->__invoke())) {
             self::get_access_token();
           }
         }
@@ -110,7 +110,7 @@
 
     private static function get_access_token() {
       if(self::$type == 'client') {
-        print("Getting Access Token\n");
+        #print("Getting Access Token\n");
         $data = array(
           'client_id' => self::$client_id,
           'client_secret' => self::$client_secret,
@@ -136,18 +136,18 @@
 
       self::$store->__invoke($access_token);
 
-      if(is_null(self::$retrieve)) {
-        self::$retrieve = function() use ($access_token) {
+      if(is_null(self::$load)) {
+        self::$load = function() use ($access_token) {
           return $access_token;
         };
       }
     }
 
     private static function check_token(&$query) {
-      $token = self::$retrieve->__invoke();
+      $token = self::$load->__invoke();
       if (time() >= $token['expires_at']){
         self::get_access_token();
-        $token = self::$retrieve->__invoke();
+        $token = self::$load->__invoke();
       }
       $query['access_token'] = $token['access_token'];
     }

@@ -17,7 +17,10 @@
 
   session_start();
   ini_set('display_errors', 'on');
-  require_once("../lib/playlyfe.php");
+  require_once("../src/playlyfe.php");
+
+  #require 'vendor/autoload.php';
+  #use playlyfe\playlyfe\Playlyfe;
 
   try {
     Playlyfe::init(
@@ -125,7 +128,7 @@
         print 'Storing';
         $_SESSION['access_token'] = $access_token;
       },
-      'retrieve' => function() {
+      'load' => function() {
         print 'Retrieving';
         if(array_key_exists('access_token', $_SESSION)){
           return $_SESSION['access_token'];

@@ -116,8 +116,8 @@ Playlyfe::init(
         "client_secret" => "",
         "type" => "client" or "code",
         "redirect_uri" => "The url to redirect to", #only for auth code flow
-        "store" => function($access_token) {}, # The closure which will persist the access token to a database. You have to persist the token to a database if you want the access token to remain the same in every request
-        "retrieve" => function() {return $access_token} # The lambda which will retrieve the access token. This is called internally by the sdk on every request so the 
+        "store" => function($access_token) {}, # The function which will persist the access token to a database. You have to persist the token to a database if you want the access token to remain the same in every request
+        "load" => function() {return $access_token} # The function which will retrieve the access token. This is called internally by the sdk on every request so the 
         #the access token can be persisted between requests
     );
 );
@@ -204,7 +204,7 @@ A ```PlaylyfeException``` is thrown whenever a curl error occurs in each call.Th
 
 License
 =======
-Playlyfe PHP SDK v0.5.3  
+Playlyfe PHP SDK v0.5.4  
 http://dev.playlyfe.com/  
 Copyright(c) 2013-2014, Playlyfe Technologies, developers@playlyfe.com  
 
