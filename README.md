@@ -1,12 +1,14 @@
+![Playlyfe PHP SDK](./images/pl-php-sdk.png "Playlyfe PHP SDK")
+
 Playlyfe PHP SDK    [![Latest Stable Version](https://poser.pugx.org/playlyfe/playlyfe/v/stable.svg)](https://packagist.org/packages/playlyfe/playlyfe)
 ================
-This is the official OAuth 2.0 PHP client SDK for the Playlyfe API.  
-It supports the `client_credentials` and `authorization code` OAuth 2.0 flows.    
+This is the official OAuth 2.0 PHP client SDK for the Playlyfe API.
+It supports the `client_credentials` and `authorization code` OAuth 2.0 flows.
 For a complete API Reference checkout [Playlyfe Developers](https://dev.playlyfe.com/docs/api) for more information.
 
 Requires
 --------
-PHP >= 5.5.9  
+PHP >= 5.5.9
 libcurl3
 
 Install
@@ -25,15 +27,15 @@ or if you are using composer then add this to your composer.json file
 ```
 Using
 -----
-### Create a client 
-  If you haven't created a client for your game yet just head over to [Playlyfe](http://playlyfe.com) and login into your account, and go to the game settings and click on client  
-  **1.Client Credentials Flow**  
-    In the client page click on whitelabel client  
-    ![alt text](https://github.com/pyros2097/playlyfe-php-sdk/raw/master/images/client.png "")
+### Create a client
+  If you haven't created a client for your game yet just head over to [Playlyfe](http://playlyfe.com) and login into your account, and go to the game settings and click on client
+  **1.Client Credentials Flow**
+    In the client page click on whitelabel client
+    ![Creating a Whitelabel Client](./images/client.png "Creating a Whitelabel Client")
 
-  **2.Authorization Code Flow**  
+  **2.Authorization Code Flow**
     In the client page click on backend client and specify the redirect uri this will be the url where you will be redirected to get the token
-    ![alt text](https://github.com/pyros2097/playlyfe-php-sdk/raw/master/images/auth.png "")
+    ![Creating a Backend Client](./images/auth.png "Creating a Backend Client")
 
 > Note: If you want to test the sdk in staging you can click the Test Client button. You need to pass the player_id in the query in every request also.
 
@@ -59,7 +61,7 @@ Example: POST
 ```php
 <?php
 # To start a process
-process =  Playlyfe::post("/definitions/processes/collect", 
+process =  Playlyfe::post("/definitions/processes/collect",
   array( player_id: 'johny'),
   array( name: "My First Process" )
 );
@@ -117,7 +119,7 @@ Playlyfe::init(
         "type" => "client" or "code",
         "redirect_uri" => "The url to redirect to", #only for auth code flow
         "store" => function($access_token) {}, # The function which will persist the access token to a database. You have to persist the token to a database if you want the access token to remain the same in every request
-        "load" => function() {return $access_token} # The function which will retrieve the access token. This is called internally by the sdk on every request so the 
+        "load" => function() {return $access_token} # The function which will retrieve the access token. This is called internally by the sdk on every request so the
         #the access token can be persisted between requests
     );
 );
@@ -194,7 +196,7 @@ Playlyfe::get_login_url();
 <?php
 Playlyfe::exchange_code($code);
 #This is used in the auth code flow so that the sdk can get the access token.
-#Before any request to the playlyfe api is made this has to be called atleast once. 
+#Before any request to the playlyfe api is made this has to be called atleast once.
 #This should be called in the the script/route which you specified in your redirect_uri
 ?>
 ```
@@ -204,19 +206,19 @@ A ```PlaylyfeException``` is thrown whenever a curl error occurs in each call.Th
 
 License
 =======
-Playlyfe PHP SDK v0.5.4  
-http://dev.playlyfe.com/  
-Copyright(c) 2013-2014, Playlyfe IT Solutions Pvt. Ltd, support@playlyfe.com  
+Playlyfe PHP SDK v0.5.4
+http://dev.playlyfe.com/
+Copyright(c) 2013-2014, Playlyfe IT Solutions Pvt. Ltd, support@playlyfe.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:  
+furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.  
+all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
