@@ -29,6 +29,7 @@ Using
 -----
 ### Create a client
   If you haven't created a client for your game yet just head over to [Playlyfe](http://playlyfe.com) and login into your account, and go to the game settings and click on client
+
   **1.Client Credentials Flow**
     In the client page click on whitelabel client
     ![Creating a Whitelabel Client](./images/client.png "Creating a Whitelabel Client")
@@ -37,13 +38,13 @@ Using
     In the client page click on backend client and specify the redirect uri this will be the url where you will be redirected to get the token
     ![Creating a Backend Client](./images/auth.png "Creating a Backend Client")
 
-> Note: If you want to test the sdk in staging you can click the Test Client button. You need to pass the player_id in the query in every request also.
+> Note: If you want to test the sdk in staging you can click the Test Client button.
 
   And then note down the client id and client secret you will need it later for using it in the sdk
 
-The Playlyfe class allows you to make rest api calls like GET, POST, .. etc
 Examples
 --------
+The Playlyfe class allows you to make rest api calls like GET, POST, .. etc
 ```php
 <?php
 # To get infomation of the player johny
