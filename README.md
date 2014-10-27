@@ -8,7 +8,7 @@ For a complete API Reference checkout [Playlyfe Developers](https://dev.playlyfe
 
 Requires
 --------
-PHP >= 5.5.9
+PHP >= 5.5.9  
 libcurl3
 
 Install
@@ -42,7 +42,8 @@ Using
   And then note down the client id and client secret you will need it later for using it in the sdk
 
 The Playlyfe class allows you to make rest api calls like GET, POST, .. etc
-Example: GET
+Examples
+--------
 ```php
 <?php
 # To get infomation of the player johny
@@ -54,12 +55,7 @@ print_r(player['scores']):
 # To get all available processes with query
 processes = Playlyfe::get('/processes', array( player_id: 'johny' ));
 print_r(processes);
-?>
-```
 
-Example: POST
-```php
-<?php
 # To start a process
 process =  Playlyfe::post("/definitions/processes/collect",
   array( player_id: 'johny'),
@@ -73,8 +69,6 @@ Playlyfe::post("/processes/#{$process_id}/play",
 );
 ?>
 ```
-
-# Examples
 ## 1. Client Credentials Flow
 ```php
 <?php
@@ -82,8 +76,8 @@ Playlyfe::post("/processes/#{$process_id}/play",
 
   Playlyfe::init(
     array(
-      'client_id' => "Zjc0MWU0N2MtODkzNS00ZWNmLWEwNmYtY2M1MGMxNGQ1YmQ4",
-      'client_secret' => "YzllYTE5NDQtNDMwMC00YTdkLWFiM2MtNTg0Y2ZkOThjYTZkMGIyNWVlNDAtNGJiMC0xMWU0LWI2NGEtYjlmMmFkYTdjOTI3",
+      'client_id' => "Your client id",
+      'client_secret' => "Your client secret",
       'type' => 'client'
     )
   );
@@ -98,8 +92,8 @@ Playlyfe::post("/processes/#{$process_id}/play",
 <?php
   Playlyfe::init(
     array(
-      "client_id" => "NzQ3OTExNTEtM2UxZC00N2IyLTgxM2YtZWJkNWFlYTg3YjBm",
-      "client_secret" => "ODc4YzQxYmItYzk1NS00Y2I3LWFjNWItZDI0YzczYTI2MjRiMjQ5YzUxZjAtNGVlMS0xMWU0LTg3YWMtNmRhODZiZjAyMmUx",
+      "client_id" => "Your client id",
+      "client_secret" => "Your client secret",
       "type" => 'code',
       "redirect_uri" => 'http://example.playlyfe.com/auth.php'
     )
@@ -108,14 +102,13 @@ Playlyfe::post("/processes/#{$process_id}/play",
 ```
 
 # Documentation
-## Init
 You can initiate a client by giving the client_id and client_secret params
 ```php
 <?php
 Playlyfe::init(
     array(
-        "client_id" => "",
-        "client_secret" => "",
+        "client_id" => "Your client id",
+        "client_secret" => "Your client secret",
         "type" => "client" or "code",
         "redirect_uri" => "The url to redirect to", #only for auth code flow
         "store" => function($access_token) {}, # The function which will persist the access token to a database. You have to persist the token to a database if you want the access token to remain the same in every request
@@ -128,7 +121,7 @@ Playlyfe::init(
 In development the sdk caches the access token in memory so you don't need to provide the store and retrieve lambdas. But in production it is highly recommended to persist the token to a database. It is very simple and easy to do it with redis. You can see the test cases for more examples.
 
 
-## API
+**API**
 ```php
 <?php
 Playlyfe::api('GET' # can be GET/POST/PUT/PATCH/DELETE
@@ -138,8 +131,7 @@ Playlyfe::api('GET' # can be GET/POST/PUT/PATCH/DELETE
 );
 ?>
 ```
-
-## Get
+**Get**
 ```php
 <?php
 Playlyfe::get( '', # The api route to get data from
@@ -148,7 +140,7 @@ Playlyfe::get( '', # The api route to get data from
 );
 ?>
 ```
-## Post
+**Post**
 ```php
 <?php
 Playlyfe::post('' # The api route to post data to
@@ -157,7 +149,7 @@ Playlyfe::post('' # The api route to post data to
 )
 ?>
 ```
-## Patch
+**Patch**
 ```php
 <?php
 Playlyfe::patch('' # The api route to patch data
@@ -166,7 +158,7 @@ Playlyfe::patch('' # The api route to patch data
 );
 ?>
 ```
-## Put
+**Put**
 ```php
 <?php
 Playlyfe::put('' # The api route to patch data
@@ -175,7 +167,7 @@ Playlyfe::put('' # The api route to patch data
 );
 ?>
 ```
-## Delete
+**Delete**
 ```php
 <?php
 Playlyfe::delete('' # The api route to delete the component
@@ -183,7 +175,7 @@ Playlyfe::delete('' # The api route to delete the component
 );
 ?>
 ```
-## Get Login Url
+**Get Login Url**
 ```php
 <?php
 Playlyfe::get_login_url();
@@ -191,7 +183,7 @@ Playlyfe::get_login_url();
 ?>
 ```
 
-## Exchange Code
+**Exchange Code**
 ```php
 <?php
 Playlyfe::exchange_code($code);
@@ -201,8 +193,8 @@ Playlyfe::exchange_code($code);
 ?>
 ```
 
-## Errors
-A ```PlaylyfeException``` is thrown whenever a curl error occurs in each call.The Exception contains a name and message field which can be used to determine the type of error that occurred.
+**Errors**  
+A ```PlaylyfeException``` is thrown whenever an error occurs in each call.The Exception contains a name and message field which can be used to determine the type of error that occurred.
 
 License
 =======
