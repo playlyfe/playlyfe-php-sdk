@@ -42,29 +42,28 @@ Using
 
   And then note down the client id and client secret you will need it later for using it in the sdk
 
-Examples
---------
+# Examples
 The Playlyfe class allows you to make rest api calls like GET, POST, .. etc
 ```php
 <?php
 # To get infomation of the player johny
-player = Playlyfe::get('/player', array( player_id: 'johny' ));
+$player = $playlyfe->get('/player', array( player_id: 'johny' ));
 
-print_r(player['id']);
-print_r(player['scores']):
+print_r($player['id']);
+print_r($player['scores']):
 
 # To get all available processes with query
-processes = Playlyfe::get('/processes', array( player_id: 'johny' ));
-print_r(processes);
+$processes = $playlyfe->get('/processes', array( player_id: 'johny' ));
+print_r($processes);
 
 # To start a process
-process =  Playlyfe::post("/definitions/processes/collect",
+$process =  $playlyfe->post("/definitions/processes/collect",
   array( player_id: 'johny'),
   array( name: "My First Process" )
 );
 
 #To play a process
-Playlyfe::post("/processes/#{$process_id}/play",
+$playlyfe->post("/processes/#{$process_id}/play",
   array( player_id: 'johny'),
   array( trigger: "#{$trigger}" )
 );
@@ -75,7 +74,7 @@ Playlyfe::post("/processes/#{$process_id}/play",
 <?php
   require_once("playlyfe.php");
 
-  Playlyfe::init(
+  $playlyfe = new Playlyfe(
     array(
       'client_id' => "Your client id",
       'client_secret' => "Your client secret",
@@ -83,7 +82,7 @@ Playlyfe::post("/processes/#{$process_id}/play",
     )
   );
 
-  $players = Playlyfe::get('/players', array('player_id' => 'student1'));
+  $players = $playlyfe->get('/players', array('player_id' => 'student1'));
 
 ?>
 ```
@@ -91,7 +90,7 @@ Playlyfe::post("/processes/#{$process_id}/play",
 ## 2. Authorization Code Flow
 ```php
 <?php
-  Playlyfe::init(
+  new Playlyfe(
     array(
       "client_id" => "Your client id",
       "client_secret" => "Your client secret",
@@ -106,7 +105,7 @@ Playlyfe::post("/processes/#{$process_id}/play",
 You can initiate a client by giving the client_id and client_secret params
 ```php
 <?php
-Playlyfe::init(
+  new Playlyfe(
     array(
         "client_id" => "Your client id",
         "client_secret" => "Your client secret",
@@ -125,7 +124,7 @@ In development the sdk caches the access token in memory so you don't need to pr
 **API**
 ```php
 <?php
-Playlyfe::api('GET' # can be GET/POST/PUT/PATCH/DELETE
+api('GET', # can be GET/POST/PUT/PATCH/DELETE
     '', # The api route to get data from
     array(), # The query params that you want to send to the route
     array() # The body data
@@ -135,7 +134,7 @@ Playlyfe::api('GET' # can be GET/POST/PUT/PATCH/DELETE
 **Get**
 ```php
 <?php
-Playlyfe::get( '', # The api route to get data from
+get('', # The api route to get data from
     array(), # The query params that you want to send to the route
     false # Whether you want the response to be in raw string form or json
 );
@@ -144,7 +143,7 @@ Playlyfe::get( '', # The api route to get data from
 **Post**
 ```php
 <?php
-Playlyfe::post('' # The api route to post data to
+post('' # The api route to post data to
     array(), # The query params that you want to send to the route
     array(). # The data you want to post to the api this will be automagically converted to json
 )
@@ -153,7 +152,7 @@ Playlyfe::post('' # The api route to post data to
 **Patch**
 ```php
 <?php
-Playlyfe::patch('' # The api route to patch data
+patch('' # The api route to patch data
     array() # The query params that you want to send to the route
     array() # The data you want to update in the api this will be automagically converted to json
 );
@@ -162,7 +161,7 @@ Playlyfe::patch('' # The api route to patch data
 **Put**
 ```php
 <?php
-Playlyfe::put('' # The api route to patch data
+put('' # The api route to patch data
     array() # The query params that you want to send to the route
     array() # The data you want to update in the api this will be automagically converted to json
 );
@@ -171,7 +170,7 @@ Playlyfe::put('' # The api route to patch data
 **Delete**
 ```php
 <?php
-Playlyfe::delete('' # The api route to delete the component
+delete('' # The api route to delete the component
     array() # The query params that you want to send to the route
 );
 ?>
@@ -179,7 +178,7 @@ Playlyfe::delete('' # The api route to delete the component
 **Get Login Url**
 ```php
 <?php
-Playlyfe::get_login_url();
+get_login_url();
 #This will return the url to which the user needs to be redirected for the user to login. You can use this directly in your views.
 ?>
 ```
@@ -187,7 +186,7 @@ Playlyfe::get_login_url();
 **Exchange Code**
 ```php
 <?php
-Playlyfe::exchange_code($code);
+exchange_code($code);
 #This is used in the auth code flow so that the sdk can get the access token.
 #Before any request to the playlyfe api is made this has to be called atleast once.
 #This should be called in the the script/route which you specified in your redirect_uri
@@ -199,7 +198,7 @@ A ```PlaylyfeException``` is thrown whenever an error occurs in each call.The Ex
 
 License
 =======
-Playlyfe PHP SDK v0.5.4  
+Playlyfe PHP SDK v0.6.0  
 http://dev.playlyfe.com/  
 Copyright(c) 2013-2014, Playlyfe IT Solutions Pvt. Ltd, support@playlyfe.com  
 
