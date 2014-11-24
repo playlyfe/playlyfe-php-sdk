@@ -33,13 +33,16 @@
       <div class="container">
         <ul>
         <?php
+          use Playlyfe\Sdk\Playlyfe;
+          use Playlyfe\Sdk\PlaylyfeException;
+
           session_start();
           ini_set('display_errors', 'on');
           require_once("../src/playlyfe.php");
           if(array_key_exists('logout', $_GET)) {
             session_destroy();
           }
-          Playlyfe::init(
+          $pl = new Playlyfe(
             array(
               'client_id' => "Zjc0MWU0N2MtODkzNS00ZWNmLWEwNmYtY2M1MGMxNGQ1YmQ4",
               'client_secret' => "YzllYTE5NDQtNDMwMC00YTdkLWFiM2MtNTg0Y2ZkOThjYTZkMGIyNWVlNDAtNGJiMC0xMWU0LWI2NGEtYjlmMmFkYTdjOTI3",
@@ -59,7 +62,7 @@
               }
             )
           );
-          $players = Playlyfe::get('/players', array('player_id' => 'student1'));
+          $players = $pl->get('/players', array('player_id' => 'student1'));
           echo "<li class='list-group-item disabled'><h2>Players</h2></li>";
           foreach($players["data"] as $value){
             $id = $value["id"];

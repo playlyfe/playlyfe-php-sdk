@@ -31,11 +31,14 @@
     <div class="jumbotron">
       <div class="container">
         <?php
+          use Playlyfe\Sdk\Playlyfe;
+          use Playlyfe\Sdk\PlaylyfeException;
+
           session_start();
           ini_set('display_errors', 'on');
           require_once("../src/playlyfe.php");
 
-          Playlyfe::init(
+          $pl = new Playlyfe(
             array(
               "client_id" => "NzQ3OTExNTEtM2UxZC00N2IyLTgxM2YtZWJkNWFlYTg3YjBm",
               "client_secret" => "ODc4YzQxYmItYzk1NS00Y2I3LWFjNWItZDI0YzczYTI2MjRiMjQ5YzUxZjAtNGVlMS0xMWU0LTg3YWMtNmRhODZiZjAyMmUx",
@@ -63,9 +66,9 @@
 
           if(array_key_exists('code', $_GET) or array_key_exists('access_token', $_SESSION)){
             if(array_key_exists('code', $_GET)){
-              Playlyfe::exchange_code($_GET['code']);
+              $pl->exchange_code($_GET['code']);
             }
-            $players = Playlyfe::get('/players', array('player_id' => 'student1'));
+            $players = $pl->get('/players', array('player_id' => 'student1'));
             echo "<ul>";
             echo "<li class='list-group-item disabled'><h2>Players</h2></li>";
             foreach($players["data"] as $value){
@@ -75,7 +78,7 @@
             echo "</ul>";
           }
           else {
-            $login_url = Playlyfe::get_login_url();
+            $login_url = $pl->get_login_url();
             echo '<h2>Please Login using your Playlyfe Account</h2>';
             echo "<a href='$login_url'>Sign in</a>";
           }
