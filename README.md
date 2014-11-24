@@ -13,13 +13,7 @@ libcurl3
 
 Install
 ----------
-Just include the file in your project like this
-```php
-<?php
-require_once("lib/playlyfe.php");
-?>
-```
-or if you are using composer then add this to your composer.json file
+Add this to your composer.json file
 ```json
 "require": {
     "playlyfe/playlyfe": "dev-master"
@@ -46,33 +40,45 @@ Using
 The Playlyfe class allows you to make rest api calls like GET, POST, .. etc
 ```php
 <?php
-# To get infomation of the player johny
-$player = $playlyfe->get('/player', array( player_id: 'johny' ));
+    use Playlyfe\Sdk\Playlyfe;
+    use Playlyfe\Sdk\PlaylyfeException;
 
-print_r($player['id']);
-print_r($player['scores']):
+    $playlyfe = new Playlyfe(
+        array(
+          'client_id' => "Your client id",
+          'client_secret' => "Your client secret",
+          'type' => 'client'
+        )
+    );
 
-# To get all available processes with query
-$processes = $playlyfe->get('/processes', array( player_id: 'johny' ));
-print_r($processes);
+    # To get infomation of the player johny
+    $player = $playlyfe->get('/player', array( player_id: 'johny' ));
 
-# To start a process
-$process =  $playlyfe->post("/definitions/processes/collect",
-  array( player_id: 'johny'),
-  array( name: "My First Process" )
-);
+    print_r($player['id']);
+    print_r($player['scores']):
 
-#To play a process
-$playlyfe->post("/processes/#{$process_id}/play",
-  array( player_id: 'johny'),
-  array( trigger: "#{$trigger}" )
-);
+    # To get all available processes with query
+    $processes = $playlyfe->get('/processes', array( player_id: 'johny' ));
+    print_r($processes);
+
+    # To start a process
+    $process =  $playlyfe->post("/definitions/processes/collect",
+      array( player_id: 'johny'),
+      array( name: "My First Process" )
+    );
+
+    #To play a process
+    $playlyfe->post("/processes/#{$process_id}/play",
+      array( player_id: 'johny'),
+      array( trigger: "#{$trigger}" )
+    );
 ?>
 ```
 ## 1. Client Credentials Flow
 ```php
 <?php
-  require_once("playlyfe.php");
+  use Playlyfe\Sdk\Playlyfe;
+  use Playlyfe\Sdk\PlaylyfeException;
 
   $playlyfe = new Playlyfe(
     array(
@@ -198,7 +204,7 @@ A ```PlaylyfeException``` is thrown whenever an error occurs in each call.The Ex
 
 License
 =======
-Playlyfe PHP SDK v0.6.0  
+Playlyfe PHP SDK v0.6.1  
 http://dev.playlyfe.com/  
 Copyright(c) 2013-2014, Playlyfe IT Solutions Pvt. Ltd, support@playlyfe.com  
 
