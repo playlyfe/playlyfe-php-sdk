@@ -1,6 +1,7 @@
 <?php
+  namespace Playlyfe\Sdk;
 
-  class PlaylyfeException extends Exception {
+  class PlaylyfeException extends \Exception {
 
     const CURL_NOT_FOUND = 0x01;
     const CURL_ERROR = 0x02;
@@ -36,7 +37,7 @@
     const HTTP_METHOD_PATCH   = 'PATCH';
     const HTTP_METHOD_PUT   = 'PUT';
 
-    function Playlyfe(array $params) {
+    function __construct(array $params) {
       if (!extension_loaded('curl')) {
         throw new Exception('The PHP exention curl must be installed to use this library.', PlaylyfeException::CURL_NOT_FOUND);
       }
@@ -67,7 +68,6 @@
       if(array_key_exists('load', $params)) {
         $this->load = $params['load'];
       }
-
       if($this->type == 'client'){
         $this->get_access_token();
       }
@@ -83,7 +83,6 @@
 
     private function get_access_token() {
       if($this->type == 'client') {
-        #print("Getting Access Token\n");
         $data = array(
           'client_id' => $this->client_id,
           'client_secret' => $this->client_secret,
@@ -92,7 +91,6 @@
         $access_token = $this->executeRequest('POST', self::AUTHORIZATION_ENDPOINT, null, $data);
       }
       else {
-        #print("Getting Access Token using Code\n");
         $data = array(
           'client_id' => $this->client_id,
           'client_secret' => $this->client_secret,
@@ -241,7 +239,7 @@
 
     public function exchange_code($code) {
       if($code == null) {
-        throw new PlaylyfeException('init_failed', "You must pass in a code in exchange_code for the auth code flow");
+        throw new PlaylyfeException('invalid_request', "You must pass in a code in exchange_code for the auth code flow");
       }
       $this->code = $code;
       $this->get_access_token();

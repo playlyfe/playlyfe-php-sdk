@@ -4,8 +4,22 @@
     "keywords": ["Playlyfe","Gamification"],
     "homepage": "http://github.com/playlyfe/playlyfe-php-sdk",
     "description": "This is the official OAuth 2.0 PHP client SDK for the Playlyfe API",
+    "authors": [
+        {
+            "name": "Peter John",
+            "email": "peter@playlyfe.com"
+        }
+    ],
     "require": {
       "php": ">=5.5.0",
       "ext-curl": "*"
+    },
+    "require-dev": {
+      "phpunit/phpunit": "4.0.*"
+    },
+    "autoload": {
+      "psr-4": {
+          "Playlyfe\\Sdk\\": "src"
+      }
     }
 }
