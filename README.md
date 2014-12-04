@@ -204,7 +204,7 @@ A ```PlaylyfeException``` is thrown whenever an error occurs in each call.The Ex
 
 License
 =======
-Playlyfe PHP SDK v0.6.1  
+Playlyfe PHP SDK v0.6.2  
 http://dev.playlyfe.com/  
 Copyright(c) 2013-2014, Playlyfe IT Solutions Pvt. Ltd, support@playlyfe.com  
 
