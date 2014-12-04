@@ -61,17 +61,17 @@
       }
       else {
         $this->store = function($access_token) {
-          #print "Storing access token\n";
         };
       }
 
       if(array_key_exists('load', $params)) {
         $this->load = $params['load'];
+        $token = $this->load->__invoke();
+        if (strlen($token['access_token']) == 0 and $this->type == 'client') {
+          $this->get_access_token();
+        }
       }
-      if($this->type == 'client'){
-        $this->get_access_token();
-      }
-      else {
+      if ($this->type == 'code') {
         if(array_key_exists('redirect_uri', $params)) {
           $this->redirect_uri = $params['redirect_uri'];
         }
@@ -252,6 +252,38 @@
 
     public function get_logout_url() {
       return "";
+    }
+
+    public function upload_image($file) {
+      $query = array();
+      $this->check_token($query);
+      $url = self::API_ENDPOINT.'/design/images?' . http_build_query($query, null, '&');
+      $ch = curl_init();
+      $cfile = new \CURLFile($file, 'image/png','upload'); # for older versions use '@'.$file
+      $data = array('file' => $cfile);
+      curl_setopt($ch, CURLOPT_URL, $url);
+      curl_setopt($ch, CURLOPT_POST, 1);
+      curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+      curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+      $result = curl_exec($ch);
+      curl_close ($ch);
+      $json_decode = json_decode($result, true);
+      return $json_decode['id'];
+    }
+
+    public function read_image($image_id, $query = array()) {
+      $this->check_token($query);
+      $url = self::API_ENDPOINT.'/design/images/'.$image_id.'?' . http_build_query($query, null, '&');
+      $ch = curl_init();
+      curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+      curl_setopt($ch, CURLOPT_URL, $url);
+      curl_setopt($ch, CURLOPT_HEADER, 0);
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+      curl_setopt($ch, CURLOPT_BINARYTRANSFER,1);
+      $picture = curl_exec($ch);
+      curl_close($ch);
+      return $picture;
     }
   }
 ?>
