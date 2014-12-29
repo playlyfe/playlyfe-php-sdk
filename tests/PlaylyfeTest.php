@@ -5,8 +5,7 @@
 
   class PlaylyfeTest extends PHPUnit_Framework_TestCase {
 
-    public function testErrors()
-    {
+    public function testErrors() {
       try {
         new Playlyfe(
           array(
@@ -34,6 +33,7 @@
       try {
         $pl = new Playlyfe(
           array(
+            'version' => 'v1',
             'client_id' => "Zjc0MWU0N2MtODkzNS00ZWNmLWEwNmYtY2M1MGMxNGQ1YmQ4",
             'client_secret' => "YzllYTE5NDQtNDMwMC00YTdkLWFiM2MtNTg0Y2ZkOThjYTZkMGIyNWVlNDAtNGJiMC0xMWU0LWI2NGEtYjlmMmFkYTdjOTI3",
             'type' => 'client'
@@ -66,9 +66,10 @@
       }
     }
 
-    public function testRoutes() {
+    public function testv1Routes() {
       $pl = new Playlyfe(
         array(
+          'version' => 'v1',
           'client_id' => "Zjc0MWU0N2MtODkzNS00ZWNmLWEwNmYtY2M1MGMxNGQ1YmQ4",
           'client_secret' => "YzllYTE5NDQtNDMwMC00YTdkLWFiM2MtNTg0Y2ZkOThjYTZkMGIyNWVlNDAtNGJiMC0xMWU0LWI2NGEtYjlmMmFkYTdjOTI3",
           'type' => 'client'
@@ -114,9 +115,59 @@
       $this->assertTrue($deleted_process['message'] != null);
     }
 
+    public function testv2Routes() {
+      $pl = new Playlyfe(
+        array(
+          'version' => 'v2',
+          'client_id' => "Zjc0MWU0N2MtODkzNS00ZWNmLWEwNmYtY2M1MGMxNGQ1YmQ4",
+          'client_secret' => "YzllYTE5NDQtNDMwMC00YTdkLWFiM2MtNTg0Y2ZkOThjYTZkMGIyNWVlNDAtNGJiMC0xMWU0LWI2NGEtYjlmMmFkYTdjOTI3",
+          'type' => 'client'
+        )
+      );
+
+      $players = $pl->get('/runtime/players', array('player_id' => 'student1', 'limit' => 1 ));
+
+      $this->assertTrue($players["data"] != null);
+      $this->assertTrue($players["data"]["0"]["id"] != null);
+
+      $players_raw = $pl->get('/runtime/players', array('player_id' => 'student1', 'limit' => 1 ), true);
+      $this->assertTrue(gettype($players_raw) == 'string');
+
+      $player_id = 'student1';
+      $player = $pl->api('GET', '/runtime/player', array( 'player_id' => $player_id ));
+      $this->assertTrue($player["id"] == "student1");
+      $this->assertTrue($player["alias"] == "Student1");
+      $this->assertTrue($player["enabled"] == true);
+
+      $pl->get('/runtime/definitions/processes', array('player_id' => $player_id ));
+      $pl->get('/runtime/definitions/teams', array( 'player_id' => $player_id ));
+      $pl->get('/runtime/processes', array( 'player_id' => $player_id ));
+      //$pl->get('/runtime/teams', array('player_id' => $player_id ));
+
+      $processes = $pl->get('/runtime/processes', array('player_id' => $player_id , 'limit' => 1, 'skip' => 4));
+      $this->assertTrue($processes["data"][0]["definition"] == "module1");
+      $this->assertTrue(count($processes["data"]) == 1);
+
+      $new_process = $pl->post('/runtime/processes', array('player_id' => $player_id), array('definition' => 'module1'));
+      $this->assertTrue($new_process["definition"]["id"] == "module1");
+      $this->assertTrue($new_process["state"] == "ACTIVE");
+
+      $pid = $new_process['id'];
+      $patched_process = $pl->patch("/runtime/processes/$pid",
+        array('player_id' => $player_id),
+        array('name' => 'patched_process', 'access' => 'PUBLIC')
+      );
+      $this->assertTrue($patched_process['name'] == 'patched_process');
+      $this->assertTrue($patched_process['access'] == 'PUBLIC');
+
+      $deleted_process = $pl->delete("/runtime/processes/$pid", array('player_id' => $player_id));
+      $this->assertTrue($deleted_process['message'] != null);
+    }
+
     public function testLoad() {
       $pl = new Playlyfe(
         array(
+          'version' => 'v1',
           'client_id' => "Zjc0MWU0N2MtODkzNS00ZWNmLWEwNmYtY2M1MGMxNGQ1YmQ4",
           'client_secret' => "YzllYTE5NDQtNDMwMC00YTdkLWFiM2MtNTg0Y2ZkOThjYTZkMGIyNWVlNDAtNGJiMC0xMWU0LWI2NGEtYjlmMmFkYTdjOTI3",
           'type' => 'client',

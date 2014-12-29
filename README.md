@@ -6,6 +6,22 @@ This is the official OAuth 2.0 PHP client SDK for the Playlyfe API.
 It supports the `client_credentials` and `authorization code` OAuth 2.0 flows.
 For a complete API Reference checkout [Playlyfe Developers](https://dev.playlyfe.com/docs/api) for more information.
 
+>Note: Breaking Changes this is the new version of the sdk which uses the Playlyfe api v2 by default if you still want to use the v1 api you can do that so by passing a version param with 'v1'
+
+ex:
+```php
+<?php
+$playlyfe = new Playlyfe(
+    array(
+      'version' => 'v1',
+      'client_id' => "Your client id",
+      'client_secret' => "Your client secret",
+      'type' => 'client'
+    )
+);
+?>
+```
+
 Requires
 --------
 PHP >= 5.5.9  
@@ -38,6 +54,7 @@ Using
 
 # Examples
 The Playlyfe class allows you to make rest api calls like GET, POST, .. etc
+**For api v1**
 ```php
 <?php
     use Playlyfe\Sdk\Playlyfe;
@@ -45,6 +62,7 @@ The Playlyfe class allows you to make rest api calls like GET, POST, .. etc
 
     $playlyfe = new Playlyfe(
         array(
+          'version' => 'v1',
           'client_id' => "Your client id",
           'client_secret' => "Your client secret",
           'type' => 'client'
@@ -52,28 +70,67 @@ The Playlyfe class allows you to make rest api calls like GET, POST, .. etc
     );
 
     # To get infomation of the player johny
-    $player = $playlyfe->get('/player', array( player_id: 'johny' ));
+    $player = $playlyfe->get('/player', array( 'player_id' => 'johny' ));
 
     print_r($player['id']);
     print_r($player['scores']):
 
     # To get all available processes with query
-    $processes = $playlyfe->get('/processes', array( player_id: 'johny' ));
+    $processes = $playlyfe->get('/processes', array( 'player_id' => 'johny' ));
     print_r($processes);
 
     # To start a process
     $process =  $playlyfe->post("/definitions/processes/collect",
-      array( player_id: 'johny'),
-      array( name: "My First Process" )
+      array( 'player_id' => 'johny'),
+      array( 'name' => "My First Process" )
     );
 
     #To play a process
-    $playlyfe->post("/processes/#{$process_id}/play",
-      array( player_id: 'johny'),
-      array( trigger: "#{$trigger}" )
+    $playlyfe->post("/processes/$process_id/play",
+      array( 'player_id' => 'johny'),
+      array( 'trigger' => "$trigger" )
     );
 ?>
 ```
+**For api v2**
+```php
+<?php
+    use Playlyfe\Sdk\Playlyfe;
+    use Playlyfe\Sdk\PlaylyfeException;
+
+    $playlyfe = new Playlyfe(
+        array(
+          'version' => 'v2',
+          'client_id' => "Your client id",
+          'client_secret' => "Your client secret",
+          'type' => 'client'
+        )
+    );
+
+    # To get infomation of the player johny
+    $player = $playlyfe->get('/runtime/player', array( 'player_id' => 'johny' ));
+
+    print_r($player['id']);
+    print_r($player['scores']):
+
+    # To get all available processes with query
+    $processes = $playlyfe->get('/runtime/processes', array( 'player_id' => 'johny' ));
+    print_r($processes);
+
+    # To start a process
+    $process =  $playlyfe->post("/processes",
+      array( 'player_id' => 'johny'),
+      array( 'name' => "My First Process", 'definition' => 'collect' )
+    );
+
+    #To play a process
+    $playlyfe->post("/processes/$process_id/play",
+      array( 'player_id' => 'johny'),
+      array( 'trigger' => "$trigger" )
+    );
+?>
+```
+
 ## 1. Client Credentials Flow
 ```php
 <?php
@@ -199,12 +256,29 @@ exchange_code($code);
 ?>
 ```
 
+**Read Image**
+```php
+<?php
+read_image($image_id, query = array( 'size' => 'small' ));
+# This is a convienience method to read your design images
+?>
+```
+
+**Upload Image**
+```php
+<?php
+upload_image($file);
+# This uploads a file to your image album and returns the image_id
+# $file is the path to the image file
+?>
+```
+
 **Errors**  
 A ```PlaylyfeException``` is thrown whenever an error occurs in each call.The Exception contains a name and message field which can be used to determine the type of error that occurred.
 
 License
 =======
-Playlyfe PHP SDK v0.6.2  
+Playlyfe PHP SDK v0.7.0  
 http://dev.playlyfe.com/  
 Copyright(c) 2013-2014, Playlyfe IT Solutions Pvt. Ltd, support@playlyfe.com  
 

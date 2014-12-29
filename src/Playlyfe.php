@@ -17,6 +17,7 @@
   }
 
   class Playlyfe {
+    private $version;
     private $client_id;
     private $client_secret;
     private $type;
@@ -29,7 +30,7 @@
     private $certificate_file;
 
     const AUTHORIZATION_ENDPOINT = 'https://playlyfe.com/auth/token';
-    const API_ENDPOINT = 'https://api.playlyfe.com/v1';
+    const API_ENDPOINT = 'https://api.playlyfe.com/';
 
     const HTTP_METHOD_GET    = 'GET';
     const HTTP_METHOD_POST   = 'POST';
@@ -45,7 +46,12 @@
       #if (!is_file($certificate_file)) {
       #  throw new InvalidArgumentException('The certificate file was not found', PlaylyfeException::CERTIFICATE_NOT_FOUND);
       #}
-
+      if(array_key_exists('version', $params)) {
+        $this->version = $params['version'];
+      }
+      else {
+        $this->version = 'v2';
+      }
       $this->client_id = $params['client_id'];
       $this->client_secret = $params['client_secret'];
 
@@ -66,10 +72,6 @@
 
       if(array_key_exists('load', $params)) {
         $this->load = $params['load'];
-        $token = $this->load->__invoke();
-        if (strlen($token['access_token']) == 0 and $this->type == 'client') {
-          $this->get_access_token();
-        }
       }
       if ($this->type == 'code') {
         if(array_key_exists('redirect_uri', $params)) {
@@ -115,7 +117,14 @@
     }
 
     private function check_token(&$query) {
-      $token = $this->load->__invoke();
+      $token = null;
+      if($this->load) {
+        $token = $this->load->__invoke();
+      }
+      if(is_null($token) and $this->type == 'client') {
+        $this->get_access_token();
+        $token = $this->load->__invoke();
+      }
       if (time() >= $token['expires_at']){
         $this->get_access_token();
         $token = $this->load->__invoke();
@@ -125,32 +134,35 @@
 
     public function api($http_method = self::HTTP_METHOD_GET, $route , $query = array(), $body = array(), $raw = false) {
       $this->check_token($query);
-      return $this->executeRequest($http_method, self::API_ENDPOINT . $route, $query, $body, $raw);
+      return $this->executeRequest($http_method, self::API_ENDPOINT.$this->version.$route, $query, $body, $raw);
     }
 
     public function get($route, $query = array(), $raw = false) {
       $this->check_token($query);
-      return $this->executeRequest(self::HTTP_METHOD_GET, self::API_ENDPOINT . $route, $query, null, $raw);
+      return $this->executeRequest(self::HTTP_METHOD_GET, self::API_ENDPOINT.$this->version.$route, $query, null, $raw);
     }
 
     public function post($route, $query = array(), $body = array()) {
       $this->check_token($query);
-      return $this->executeRequest(self::HTTP_METHOD_POST, self::API_ENDPOINT . $route, $query, $body);
+      if(count($body) == 0) {
+        $body = (object) array();
+      }
+      return $this->executeRequest(self::HTTP_METHOD_POST, self::API_ENDPOINT.$this->version.$route, $query, $body);
     }
 
     public function patch($route, $query = array(), $body = array()) {
       $this->check_token($query);
-      return $this->executeRequest(self::HTTP_METHOD_PATCH, self::API_ENDPOINT . $route, $query, $body);
+      return $this->executeRequest(self::HTTP_METHOD_PATCH, self::API_ENDPOINT.$this->version.$route, $query, $body);
     }
 
     public function put($route, $query = array(), $body = array()) {
       $this->check_token($query);
-      return $this->executeRequest(self::HTTP_METHOD_PUT, self::API_ENDPOINT . $route, $query, $body);
+      return $this->executeRequest(self::HTTP_METHOD_PUT, self::API_ENDPOINT.$this->version.$route, $query, $body);
     }
 
     public function delete($route, $query = array()) {
       $this->check_token($query);
-      return $this->executeRequest(self::HTTP_METHOD_DELETE, self::API_ENDPOINT . $route, $query);
+      return $this->executeRequest(self::HTTP_METHOD_DELETE, self::API_ENDPOINT.$this->version.$route, $query);
     }
 
     /**
@@ -218,7 +230,7 @@
         $content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
 
         if ($curl_error = curl_error($ch)) {
-          throw new Exception($curl_error, PlaylyfeException::CURL_ERROR);
+          throw new \Exception($curl_error, PlaylyfeException::CURL_ERROR);
         } else {
           if($raw === true){
             return $result;
@@ -245,7 +257,7 @@
       $this->get_access_token();
     }
 
-    public function get_login_url() {
+   public function get_login_url() {
       $query = array( 'redirect_uri' => $this->redirect_uri, 'response_type' => 'code', 'client_id' => $this->client_id);
       return "https://playlyfe.com/auth?" . http_build_query($query, null, '&');
     }
@@ -257,7 +269,7 @@
     public function upload_image($file) {
       $query = array();
       $this->check_token($query);
-      $url = self::API_ENDPOINT.'/design/images?' . http_build_query($query, null, '&');
+      $url = self::API_ENDPOINT.$this->version.'/design/images?' . http_build_query($query, null, '&');
       $ch = curl_init();
       $cfile = new \CURLFile($file, 'image/png','upload'); # for older versions use '@'.$file
       $data = array('file' => $cfile);
@@ -274,7 +286,7 @@
 
     public function read_image($image_id, $query = array()) {
       $this->check_token($query);
-      $url = self::API_ENDPOINT.'/design/images/'.$image_id.'?' . http_build_query($query, null, '&');
+      $url = self::API_ENDPOINT.$this->version.'/design/images/'.$image_id.'?' . http_build_query($query, null, '&');
       $ch = curl_init();
       curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
       curl_setopt($ch, CURLOPT_URL, $url);
