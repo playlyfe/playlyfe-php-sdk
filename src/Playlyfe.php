@@ -257,7 +257,7 @@
       $this->get_access_token();
     }
 
-   public function get_login_url() {
+    public function get_login_url() {
       $query = array( 'redirect_uri' => $this->redirect_uri, 'response_type' => 'code', 'client_id' => $this->client_id);
       return "https://playlyfe.com/auth?" . http_build_query($query, null, '&');
     }
@@ -296,6 +296,36 @@
       $picture = curl_exec($ch);
       curl_close($ch);
       return $picture;
+    }
+
+    # Taken from https://github.com/firebase/php-jwt. Please watch this repo and update as necessary
+    public static function createJWT(array $params) {
+      if(!array_key_exists('expires', $params)) {
+        $params['expires'] = 3600;
+      }
+      if(!array_key_exists('scopes', $params)) {
+        $params['scopes'] = array();
+      }
+      $payload = array(
+        'player_id' => $params['player_id'],
+        'scopes' => $params['scopes'],
+        'exp' => time() + $params['expires']
+      );
+      $header = array('typ' => 'JWT', 'alg' => 'HS256');
+      $segments = array();
+      $segments[] = Playlyfe::urlsafeB64Encode(json_encode($header));
+      $segments[] = Playlyfe::urlsafeB64Encode(json_encode($payload));
+      $signing_input = implode('.', $segments);
+
+      $signature = hash_hmac('SHA256', $signing_input, $params['client_secret'], true);
+      $segments[] = Playlyfe::urlsafeB64Encode($signature);
+      $token = implode('.', $segments);
+      $token = $params['client_id'] . ':' . $token;
+      return $token;
+    }
+
+    public static function urlsafeB64Encode($input) {
+      return str_replace('=', '', strtr(base64_encode($input), '+/', '-_'));
     }
   }
 ?>

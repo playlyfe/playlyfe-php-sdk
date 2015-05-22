@@ -193,5 +193,15 @@
       $this->assertTrue($player["id"] == "student1");
     }
 
+    public function testJWT() {
+      $token = Playlyfe::createJWT(array(
+        'client_id' => 'MWYwZGYzNTYtZGIxNy00OGM5LWExZGMtZjBjYTFiN2QxMTlh',
+        'client_secret' => 'NmM2YTcxOGYtNGE2ZC00ZDdhLTkyODQtYTIwZTE4ZDc5YWNjNWFiNzBiYjAtZmZiMC0xMWU0LTg5YzctYzc5NWNiNzA1Y2E4',
+        'player_id' => 'student1',
+        'expires' => 3600
+      ));
+      echo $token;
+    }
+
   }
 ?>

@@ -149,7 +149,6 @@ The Playlyfe class allows you to make rest api calls like GET, POST, .. etc
 
 ?>
 ```
-
 ## 2. Authorization Code Flow
 ```php
 <?php
@@ -163,6 +162,20 @@ The Playlyfe class allows you to make rest api calls like GET, POST, .. etc
   );
 ?>
 ```
+## 3. Custom Login Flow using JWT(JSON Web Token)
+```php
+<?php
+$token = Playlyfe::createJWT(array(
+    'client_id' => 'Your client id',
+    'client_secret' => 'Your client secret',
+    'player_id' => 'johny',  # The player id associated with your user
+    'scopes' => array('player.runtime.read', 'player.runtime.write'), # The scopes the player has access to
+    'expires' => 3600 # 1 hour
+));
+echo $token;
+?>
+```
+This is used to create jwt token which can be created when your user is authenticated. This token can then be sent to the frontend and or stored in your session. With this token the user can directly send requests to the Playlyfe API as the player.
 
 # Documentation
 You can initiate a client by giving the client_id and client_secret params
@@ -278,7 +291,7 @@ A ```PlaylyfeException``` is thrown whenever an error occurs in each call.The Ex
 
 License
 =======
-Playlyfe PHP SDK v0.7.0  
+Playlyfe PHP SDK v0.8.0  
 http://dev.playlyfe.com/  
 Copyright(c) 2013-2014, Playlyfe IT Solutions Pvt. Ltd, support@playlyfe.com  
 
