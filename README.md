@@ -97,7 +97,7 @@ Install
 Add this to your composer.json file
 ```json
 "require": {
-    "playlyfe/playlyfe": "dev-master"
+    "playlyfe/playlyfe": "0.8.0"
 }
 ```
 Using
