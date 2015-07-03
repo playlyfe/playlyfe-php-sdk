@@ -67,7 +67,7 @@ The Playlyfe class allows you to make rest api calls like GET, POST, .. etc
     $player = $playlyfe->get('/runtime/player', array( 'player_id' => 'johny' ));
 
     print_r($player['id']);
-    print_r($player['scores']):
+    print_r($player['scores']);
 
     # To get all available processes with query
     $processes = $playlyfe->get('/runtime/processes', array( 'player_id' => 'johny' ));
