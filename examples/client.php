@@ -33,12 +33,13 @@
       <div class="container">
         <ul>
         <?php
-          use Playlyfe\Sdk\Playlyfe;
-          use Playlyfe\Sdk\PlaylyfeException;
-
           session_start();
           ini_set('display_errors', 'on');
-          require_once("../src/playlyfe.php");
+          require_once("../src/Playlyfe.php");
+          
+          use Playlyfe\Sdk\Playlyfe;
+          use Playlyfe\Sdk\PlaylyfeException;
+          
           if(array_key_exists('logout', $_GET)) {
             session_destroy();
           }
@@ -62,7 +63,7 @@
               }
             )
           );
-          $players = $pl->get('/players', array('player_id' => 'student1'));
+          $players = $pl->get('/runtime/players', array('player_id' => 'student1'));
           echo "<li class='list-group-item disabled'><h2>Players</h2></li>";
           foreach($players["data"] as $value){
             $id = $value["id"];
