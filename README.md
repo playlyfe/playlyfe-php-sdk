@@ -10,44 +10,6 @@ For a complete API Reference checkout [Playlyfe Developers](https://dev.playlyfe
 
 # Examples
 The Playlyfe class allows you to make rest api calls like GET, POST, .. etc
-**For api v1**
-```php
-<?php
-    use Playlyfe\Sdk\Playlyfe;
-    use Playlyfe\Sdk\PlaylyfeException;
-
-    $playlyfe = new Playlyfe(
-        array(
-          'version' => 'v1',
-          'client_id' => "Your client id",
-          'client_secret' => "Your client secret",
-          'type' => 'client'
-        )
-    );
-
-    # To get infomation of the player johny
-    $player = $playlyfe->get('/player', array( 'player_id' => 'johny' ));
-
-    print_r($player['id']);
-    print_r($player['scores']):
-
-    # To get all available processes with query
-    $processes = $playlyfe->get('/processes', array( 'player_id' => 'johny' ));
-    print_r($processes);
-
-    # To start a process
-    $process =  $playlyfe->post("/definitions/processes/collect",
-      array( 'player_id' => 'johny'),
-      array( 'name' => "My First Process" )
-    );
-
-    #To play a process
-    $playlyfe->post("/processes/$process_id/play",
-      array( 'player_id' => 'johny'),
-      array( 'trigger' => "$trigger" )
-    );
-?>
-```
 **For api v2**
 ```php
 <?php
@@ -87,6 +49,8 @@ The Playlyfe class allows you to make rest api calls like GET, POST, .. etc
 ?>
 ```
 
+There is also a blog series on using this SDK here https://blog.playlyfe.com/gamify-moodle-laying-the-base/
+
 Requires
 --------
 PHP >= 5.5.9  
@@ -117,11 +81,12 @@ In the client page select Yes for both the first and second questions
     array(
       'client_id' => "Your client id",
       'client_secret' => "Your client secret",
-      'type' => 'client'
+      'type' => 'client',
+      'version' => 'v2'
     )
   );
 
-  $players = $playlyfe->get('/players', array('player_id' => 'student1'));
+  $players = $playlyfe->get('/runtime/players', array('player_id' => 'student1'));
 
 ?>
 ```
@@ -135,6 +100,7 @@ In the client page select yes for the first question and no for the second
       "client_id" => "Your client id",
       "client_secret" => "Your client secret",
       "type" => 'code',
+      "version" => 'v2',
       "redirect_uri" => 'http://example.playlyfe.com/auth.php'
     )
   );
@@ -191,6 +157,7 @@ You can initiate a client by giving the client_id and client_secret params
         "client_id" => "Your client id",
         "client_secret" => "Your client secret",
         "type" => "client" or "code",
+        "version" => "the version of the api you would like to use use v2 for now",
         "redirect_uri" => "The url to redirect to", #only for auth code flow
         "store" => function($access_token) {}, # The function which will persist the access token to a database. You have to persist the token to a database if you want the access token to remain the same in every request
         "load" => function() {return $access_token} # The function which will retrieve the access token. This is called internally by the sdk on every request so the
@@ -296,7 +263,7 @@ A ```PlaylyfeException``` is thrown whenever an error occurs in each call.The Ex
 
 License
 =======
-Playlyfe PHP SDK v0.8.0  
+Playlyfe PHP SDK
 http://dev.playlyfe.com/  
 Copyright(c) 2013-2014, Playlyfe IT Solutions Pvt. Ltd, support@playlyfe.com  
 
