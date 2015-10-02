@@ -51,6 +51,13 @@ The Playlyfe class allows you to make rest api calls like GET, POST, .. etc
 
 There is also a blog series on using this SDK here https://blog.playlyfe.com/gamify-moodle-laying-the-base/
 
+And an easy way to run the examples in the examples folder is using [docker-moodle](https://github.com/playlyfe/docker-moodle) like this,
+```
+docker run -d --name moodle -p 3000:3000 -p 3306:3306 -v /path/to/playlyfe-php-sdk:/var/www/html playlyfe/moodle
+```
+Then navigate to http://localhost:3000/examples/client.php
+
+
 Requires
 --------
 PHP >= 5.5.9  
