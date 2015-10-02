@@ -31,12 +31,12 @@
     <div class="jumbotron">
       <div class="container">
         <?php
-          use Playlyfe\Sdk\Playlyfe;
-          use Playlyfe\Sdk\PlaylyfeException;
-
           session_start();
           ini_set('display_errors', 'on');
           require_once("../src/playlyfe.php");
+          
+          use Playlyfe\Sdk\Playlyfe;
+          use Playlyfe\Sdk\PlaylyfeException;
 
           $pl = new Playlyfe(
             array(
@@ -68,7 +68,7 @@
             if(array_key_exists('code', $_GET)){
               $pl->exchange_code($_GET['code']);
             }
-            $players = $pl->get('/players', array('player_id' => 'student1'));
+            $players = $pl->get('/runtime/players', array('player_id' => 'student1'));
             echo "<ul>";
             echo "<li class='list-group-item disabled'><h2>Players</h2></li>";
             foreach($players["data"] as $value){
