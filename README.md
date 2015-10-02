@@ -36,13 +36,13 @@ The Playlyfe class allows you to make rest api calls like GET, POST, .. etc
     print_r($processes);
 
     # To start a process
-    $process =  $playlyfe->post("/processes",
+    $process =  $playlyfe->post("/runtime/processes",
       array( 'player_id' => 'johny'),
       array( 'name' => "My First Process", 'definition' => 'collect' )
     );
 
     #To play a process
-    $playlyfe->post("/processes/$process_id/play",
+    $playlyfe->post("/runtime/processes/$process_id/play",
       array( 'player_id' => 'johny'),
       array( 'trigger' => "$trigger" )
     );
