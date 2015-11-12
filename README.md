@@ -268,6 +268,14 @@ upload_image($file);
 **Errors**  
 A ```PlaylyfeException``` is thrown whenever an error occurs in each call.The Exception contains a name and message field which can be used to determine the type of error that occurred.
 
+**Faqs?**  
+**1. I get this error access_token_invalid for every request?**  
+   You are most probably appending the query params to your'e route like this  
+   `$pl.post("/runtime/actions/:action_id/play?player_id=Johny", [], []);`  
+   and this will cause the issue. 
+   Please use the second param for your query params like this  
+   `$pl.post("/runtime/actions/:action_id/play", ["player_id" => "Johny"], []);`  
+
 License
 =======
 Playlyfe PHP SDK
