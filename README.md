@@ -67,8 +67,10 @@ Install
 ----------
 Add this to your composer.json file
 ```json
-"require": {
-    "playlyfe/playlyfe": "0.8.0"
+{
+  "require": {
+      "playlyfe/playlyfe": "0.8.0"
+  }
 }
 ```
 Using
@@ -81,6 +83,7 @@ In the client page select Yes for both the first and second questions
 ![client](https://cloud.githubusercontent.com/assets/1687946/7930229/2c2f14fe-0924-11e5-8c3b-5ba0c10f066f.png)
 ```php
 <?php
+  require __DIR__ . '/vendor/autoload.php';
   use Playlyfe\Sdk\Playlyfe;
   use Playlyfe\Sdk\PlaylyfeException;
 
